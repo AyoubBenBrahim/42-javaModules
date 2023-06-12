@@ -35,7 +35,9 @@ public class Program {
     private static void isPrime(double n) {
         int iter = 0;
         if (n <= 1) {
-            throw new IllegalArgumentException("IllegalArgument");
+            System.out.println("IllegalArgument");
+            System.exit(-1);
+            return;
         }
         for (int i = 2; i <= ft_sqrt(n); i++) {
             iter++;
@@ -47,34 +49,12 @@ public class Program {
         System.out.println("true " + (iter + 1));
     }
 
-    // private static void isPrime(int n) {
-    // int iter = 0;
-    // if (n <= 1) {
-    // throw new IllegalArgumentException("IllegalArgument");
-    // }
-    // for (int i = 2; i < n; i++) {
-    // iter++;
-    // if (n % i == 0) {
-    // System.out.println("false " + iter);
-    // return;
-    // }
-    // }
-    // System.out.println("true " + iter);
-    // }
-
     public static void main(String[] args) {
 
-        try (Scanner scanner = new Scanner(System.in)) {
-            System.out.print("-> ");
-            double input = scanner.nextDouble();
-
-            try {
-                isPrime(input);
-            } catch (IllegalArgumentException e) {
-                System.err.println(e.getMessage());
-                System.exit(-1);
-            }
-        }
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("-> ");
+        double input = scanner.nextDouble();
+        isPrime(input);
     }
 
 }
