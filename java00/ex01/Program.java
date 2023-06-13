@@ -37,7 +37,6 @@ public class Program {
         if (n <= 1) {
             System.out.println("IllegalArgument");
             System.exit(-1);
-            return;
         }
         for (int i = 2; i <= ft_sqrt(n); i++) {
             iter++;

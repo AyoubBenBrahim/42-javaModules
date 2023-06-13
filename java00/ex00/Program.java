@@ -7,7 +7,7 @@ public class Program {
     }
 
     private static void sumOfDigits() {
-        int nbr = 998877;
+        int nbr = 45673;
         int sum = 0;
 
         for (int temp = nbr; temp > 0; temp /= 10) {
@@ -18,3 +18,8 @@ public class Program {
         System.out.println(sum);
     }
 }
+
+// 198131
+// -> 12901212
+// -> 11122
+// 42
