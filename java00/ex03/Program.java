@@ -4,6 +4,22 @@ import java.util.Scanner;
 
 public class Program {
 
+    private static void terminate() {
+        System.err.println("IllegalArgument");
+        System.exit(-1);
+    }
+
+    private static int powerOfTen(int exponent) {
+        if (exponent < 0)
+            terminate();
+
+        int result = 1;
+        for (int i = 0; i < exponent; i++) {
+            result *= 10;
+        }
+        return result;
+    }
+
     private static int getStudentsGrades(String digitsStream, int studentsData) {
 
         Scanner scanner = new Scanner(digitsStream);
@@ -25,10 +41,8 @@ public class Program {
             }
             digitCount++;
         }
-        if (isError || digitCount != 5 || scanner.hasNext()) {
-            System.err.println("IllegalArgument");
-            System.exit(-1);
-        }
+        if (isError || digitCount != 5 || scanner.hasNext())
+            terminate();
 
         scanner.close();
 
@@ -37,7 +51,8 @@ public class Program {
 
     private static void chartSudentsGrades(int studentsData, int totalWeeks) {
         int weekCounter = 1;
-        int division = (int) Math.pow(10, totalWeeks - 2);
+        // int division = (int) Math.pow(10, totalWeeks - 2);
+        int division = powerOfTen(totalWeeks - 2);
         while (division > 0) {
             System.out.print("week " + weekCounter + " ");
             int digit = studentsData / division;
@@ -58,15 +73,13 @@ public class Program {
         while (true) {
             String weekStr = scanner.nextLine();
 
-            if (weekStr.equals("42") || currentWeek >= 18) {
+            if (weekStr.equals("42") || currentWeek > 18) {
                 break;
             }
             String expectedPrefix = "week " + currentWeek;
 
-            if (!weekStr.equals(expectedPrefix)) {
-                System.err.println("IllegalArgument");
-                System.exit(-1);
-            }
+            if (!weekStr.equals(expectedPrefix))
+                terminate();
 
             String digitsStream = scanner.nextLine();
             studentsData = getStudentsGrades(digitsStream, studentsData);
