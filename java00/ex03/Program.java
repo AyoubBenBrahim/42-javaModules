@@ -9,50 +9,57 @@ public class Program {
         int studentsData = 0;
         int currentWeek = 1;
         while (true) {
-            System.out.print("-> ");
             String weekStr = scanner.nextLine();
-           
+
             if (weekStr.equals("42") || currentWeek >= 18) {
                 break;
             }
             String expectedPrefix = "week " + currentWeek;
 
             if (!weekStr.equals(expectedPrefix)) {
-                System.err.println("IllegalArgument");
+                System.err.println(" week IllegalArgument");
                 System.exit(-1);
             }
 
             int min = 9;
-            scanner.useDelimiter(" ");
-            for (int i = 0; i < 5; i++) {
-                if (scanner.hasNextInt()) {
-                    int input = scanner.nextInt();
-                     System.out.println("input: " + input);
-                    min = (input < min) ? input : min;
-                    if (input > 9 || input <= 1) {
-                        System.err.println("IllegalArgument");
-                        System.exit(-1);
-                    }
+
+            boolean isError = false;
+
+            int count = 0;
+            while (scanner.hasNextInt() && count < 5) {
+                int inputDigit = scanner.nextInt();
+                min = (inputDigit < min) ? inputDigit : min;
+                if (inputDigit < 1 || inputDigit > 9) {
+                    isError = true;
+                    break;
                 }
-                scanner.nextLine();
+                count++;
             }
+            if (isError) {
+                System.err.println("input digit IllegalArgument");
+                System.exit(-1);
+            }
+            scanner.nextLine();
+
             studentsData = studentsData * 10 + min;
             currentWeek++;
-        }
 
-        for (int i = 0; i < currentWeek; i++) {
-            for (int temp = studentsData; temp > 0; temp /= 10) {
-                int digit = temp % 10;
-                System.out.print(currentWeek);
-                for (int j = 0; j < digit; j++) {
-                    System.out.print("=");
-                }
-                System.out.print(">");
+        }
+        int division = (int) Math.pow(10, currentWeek - 2);
+
+        currentWeek = 1;
+        while (division > 0) {
+            System.out.print("week " + currentWeek + " ");
+            int digit = studentsData / division;
+            studentsData = studentsData % division;
+            division = division / 10;
+            for (int j = 0; j < digit; j++) {
+                System.out.print("=");
             }
+            System.out.println(">");
+            currentWeek++;
         }
-
         scanner.close();
 
     }
-
 }
