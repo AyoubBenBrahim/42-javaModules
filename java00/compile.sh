@@ -1,12 +1,9 @@
 #!/bin/bash
 
-#Check if the project folder argument is provided
 if [ $# -eq 0 ]; then
-    echo "Please provide the project folder as an argument."
-    exit 1
+    exec  echo "Please provide the project folder as an argument."
 fi
 
-#Change to the project folder
 cd "$1" || exit 1
 
 #Find the name of the main class by looking for a file with a main() method
