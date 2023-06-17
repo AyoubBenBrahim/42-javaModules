@@ -4,31 +4,53 @@ import java.util.Scanner;
 
 public class Program {
 
-    private static void countOccurrences(String str, int[] charCount) {
+    private static void countOccurrences(String str, int[][] charCounts) {
         System.out.println();
-        for (int i = 0; i < charCount.length; i++) {
-            charCount[i] = 0;
-        }
-        for (char c : str.toCharArray()) {
-            if (charCount[c] < 999)
-                charCount[c]++;
+
+        char[] charArray = str.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            char c = charArray[i];
+            if (charCounts[c][1] < 999) {
+                charCounts[c][0] = c;
+                charCounts[c][1]++;
+            }
         }
     }
 
-    private static void sortArray(int[] charCount, int[][] charCounts) {
-
-        for (int i = 0; i < charCounts.length; i++) {
-            charCounts[i][0] = i;
-            charCounts[i][1] = charCount[i];
+    private static void initTopCountsFromCharCounts(int[][] charCounts, int[][] TopCountsArray) {
+        // Initialize the top counts array with the first 10 elements from the
+        // charCounts array
+        for (int i = 0; i < TopCountsArray.length; i++) {
+            TopCountsArray[i][0] = charCounts[i][0];
+            TopCountsArray[i][1] = charCounts[i][1];
         }
+    }
+
+    private static void sortArray(int[][] charCounts) {
         for (int i = 0; i < charCounts.length - 1; i++) {
             for (int j = i + 1; j < charCounts.length; j++) {
                 if (charCounts[i][1] < charCounts[j][1] ||
                         (charCounts[i][1] == charCounts[j][1] && charCounts[i][0] > charCounts[j][0])) {
-                    int[] temp = charCounts[i];
-                    charCounts[i] = charCounts[j];
-                    charCounts[j] = temp;
+                    int tempChar = charCounts[i][0];
+                    int tempCount = charCounts[i][1];
+                    charCounts[i][0] = charCounts[j][0];
+                    charCounts[i][1] = charCounts[j][1];
+                    charCounts[j][0] = tempChar;
+                    charCounts[j][1] = tempCount;
                 }
+            }
+        }
+    }
+
+    private static void compareCountsToTop(int[][] charCounts, int[][] TopCountsArray) {
+        // Iterate over the remaining elements in the charCounts array and compare them
+        // to the top counts array
+        for (int i = TopCountsArray.length; i < charCounts.length; i++) {
+            int count = charCounts[i][1];
+            if (count > TopCountsArray[TopCountsArray.length - 1][1]) {
+                TopCountsArray[TopCountsArray.length - 1][0] = charCounts[i][0];
+                TopCountsArray[TopCountsArray.length - 1][1] = count;
+                sortArray(TopCountsArray);
             }
         }
     }
@@ -63,35 +85,33 @@ public class Program {
         Scanner scanner = new Scanner(System.in);
         String str = scanner.nextLine();
 
-        // Count the occurrences of each character in the string
-        int[] charCount = new int[65535];
-
-        countOccurrences(str, charCount);
-
-        // Sort the characters based on their occurrences
         int[][] charCounts = new int[65535][2];
-        sortArray(charCount, charCounts);
+        /*
+         * use this website to check occurrences of each character
+         * https://www.browserling.com/tools/letter-frequency
+         */
+        countOccurrences(str, charCounts);
 
-        printHistogram(charCounts);
+        int[][] TopCountsArray = new int[10][2];
+        initTopCountsFromCharCounts(charCounts, TopCountsArray);
+
+        sortArray(TopCountsArray);
+
+        compareCountsToTop(charCounts, TopCountsArray);
+
+        // Print the top 10 counts and their corresponding characters
+        /*
+         * for (int i = 0; i < TopCountsArray.length; i++) {
+         * char c = (char) TopCountsArray[i][0];
+         * int count = TopCountsArray[i][1];
+         * System.out.println(c + ": " + count);
+         * }
+         */
+
+        printHistogram(TopCountsArray);
 
         scanner.close();
 
     }
 
 }
-/*
-  AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASSSSSSSSSSSSSSSSSSSSSSSSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDWEWWKFKKDKKDSKAKLSLDKSKALLLLLLLLLLRTRTETWTWWWWWWWWWWOOOOOOO
- */
-
-// 36
-// # 35
-// # #
-// # # 27
-// # # #
-// # # #
-// # # #
-// # # # 14 12
-// # # # # # 9
-// # # # # # # 7 4
-// # # # # # # # # 2 2
-// D A S W L K O T E R
