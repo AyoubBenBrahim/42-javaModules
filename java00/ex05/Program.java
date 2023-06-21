@@ -61,32 +61,31 @@ public class Program {
 
         getStudentsNames(studentNames);
         getClassSchedule(classSchedule);
-        getAttendanceRecords(attendanceRecords, studentNames, classSchedule);
 
-        for (int i = 0; i < attendanceRecords.length; i++) {
-            for (int j = 0; j < attendanceRecords[i].length; j++) {
-                if (attendanceRecords[i][j] != -1) {
-                    int T[] = unpackIntegers(j);
-                    System.out.println(studentNames[i] + " " + T[0] + " " + T[1] + " " + getDayString(T[1]%7) + " " + attendanceRecords[i][j]);
-                }
-            }
-            System.out.println();
-        }
-        // displayRecords(studentNames, attendanceRecords, classSchedule);
+        // int[] arr = getUniqueElements(classSchedule);
 
-     
-        
-        // format the output of the array with two decimal places
-        // String formattedArray = Arrays.deepToString(attendanceRecords)
-        //         .replace("[[", "[")
-        //         .replace("], ", "\n")
-        //         .replace("[", "")
-        //         .replace("]]", "")
-        //         .replace(", ", "\t")
-        //         .replace(",", "");
-        
-        // // print the formatted array
-        // System.out.println(formattedArray);
+        // System.out.print("[");
+        // for (int i = 0; i < arr.length; i++) {
+        // System.out.print(arr[i]);
+        // if (i < arr.length - 1) {
+        // System.out.print(", ");
+        // }
+        // }
+        // System.out.println("]");
+
+        // for (int i = 0; i < attendanceRecords.length; i++) {
+        // for (int j = 0; j < attendanceRecords[i].length; j++) {
+        // if (attendanceRecords[i][j] != -1) {
+        // int T[] = unpackIntegers(j);
+        // System.out.println(studentNames[i] + " " + T[0] + " " + T[1] + " " +
+        // getDayString(T[1] % 7) + " "
+        // + attendanceRecords[i][j]);
+        // }
+        // }
+        // }
+        // System.out.println();
+
+        displayRecords(studentNames, attendanceRecords, classSchedule);
 
     }
 
@@ -195,7 +194,7 @@ public class Program {
     /*
     ***********************************************************************************
     */
-  private static void checkLimitClassPerWeek(int[] classSchedule) {
+    private static void checkLimitClassPerWeek(int[] classSchedule) {
         int i = 0;
         while (i < classSchedule.length && classSchedule[i] != -1)
             i++;
@@ -212,7 +211,7 @@ public class Program {
         int countClass = 0;
         for (int j = 0; j < days.length; j++) {
             // if (days[j] > 10)
-            //     terminate();
+            // terminate();
             countClass += days[j];
         }
         System.out.println("countClass: " + countClass);
@@ -243,7 +242,8 @@ public class Program {
 
             numClasses++;
         }
-        // checkLimitClassPerWeek(classSchedule); // no need to check this, the while loop above already does
+        // checkLimitClassPerWeek(classSchedule); // no need to check this, the while
+        // loop above already does
         // scanner.close(); // dont close the scanner, we need it next
     }
 
@@ -302,7 +302,7 @@ public class Program {
     ***********************************************************************************
     */
 
-  private static void checkIfDateCorrespondToDayInSchedule(int[] classSchedule, int date) {
+    private static void checkIfDateCorrespondToDayInSchedule(int[] classSchedule, int date) {
         int i = 0;
         while (i < classSchedule.length && classSchedule[i] != -1) {
             int T[] = unpackIntegers(classSchedule[i]);
@@ -317,7 +317,8 @@ public class Program {
     ***********************************************************************************
     */
 
-    private static void parseAttendanceRecords(int[][] attendanceRecords, String[] studentNames, int[] classSchedule, String inputStram) {
+    private static void parseAttendanceRecords(int[][] attendanceRecords, String[] studentNames, int[] classSchedule,
+            String inputStram) {
 
         Scanner scanner = new Scanner(inputStram);
         scanner.useDelimiter(" ");
@@ -340,7 +341,6 @@ public class Program {
         int date = isDigit(sc.next());
         int attendanceStatus = getAttendanceStatus(sc.next());
         int timeDatePair = packIntegers(time, date);
-        
 
         checkIfTimeExistInSchedule(classSchedule, time);
         checkIfDateCorrespondToDayInSchedule(classSchedule, date);
@@ -348,17 +348,17 @@ public class Program {
             terminate();
 
         sc.close();
-        System.out.println("studentIndex: " + studentIndex +
-                " time: " + time + " date: " + date + " attendanceStatus: " + attendanceStatus);
+        // System.out.println("studentIndex: " + studentIndex +
+        // " time: " + time + " date: " + date + " attendanceStatus: " +
+        // attendanceStatus);
 
         // int T[] = unpackIntegers(timeDate);
-        // System.out.println("timeDate = " + timeDate + " time: " + T[0] + " date: " + T[1]);
+        // System.out.println("timeDate = " + timeDate + " time: " + T[0] + " date: " +
+        // T[1]);
 
-
-        
         attendanceRecords[studentIndex][timeDatePair] = attendanceStatus;
-        System.out.println("[" + studentIndex + "][" + timeDatePair + "] = " + attendanceStatus);
- 
+        // System.out.println("[" + studentIndex + "][" + timeDatePair + "] = " +
+        // attendanceStatus);
 
     }
 
@@ -385,59 +385,246 @@ public class Program {
     ***********************************************************************************
     */
 
-    private static void displayRecords(String[] studentNames, int[][] attendanceRecords, int[][] classSchedule) {
+    private static int[] getUniqueElements(int[] schedule) {
 
-        // Display the attendance records in tabular form
-        int numClasses = classSchedule.length;
-        System.out.println("Class Schedule:");
-        for (int i = 0; i < numClasses; i++) {
-            int day = classSchedule[i][0];
-            int time = classSchedule[i][1];
-            System.out.print(time + ":00 ");
-            switch (day) {
-                case 1:
-                    System.out.print("MO");
-                    break;
-                case 2:
-                    System.out.print("TU");
-                    break;
-                case 3:
-                    System.out.print("WE");
-                    break;
-                case 4:
-                    System.out.print("TH");
-                    break;
-                case 5:
-                    System.out.print("FR");
-                    break;
-                case 6:
-                    System.out.print("SA");
-                    break;
-                case 7:
-                    System.out.print("SU");
-                    break;
-            }
-            System.out.print(" " + (i + 1) + "|");
+        int[] nums = new int[schedule.length];
+        int i = 0;
+        while (i < schedule.length && schedule[i] != -1) {
+            int T[] = unpackIntegers(schedule[i]);
+            nums[i] = T[1];
+            i++;
         }
-        System.out.println();
-        for (int i = 0; i < 10; i++) {
-            if (studentNames[i] != null) {
-                System.out.print(studentNames[i] + " |");
-                for (int j = 0; j < numClasses; j++) {
-                    if (attendanceRecords[i][j] == 1) {
-                        System.out.print(" HERE ");
-                    } else if (attendanceRecords[i][j] == -1) {
-                        System.out.print(" ABSENT ");
-                    } else {
-                        System.out.print("      ");
-                    }
-                    System.out.print("|");
+
+        int[] uniqueNums = new int[nums.length];
+        int numUnique = 0;
+
+        for (int j = 0; j < nums.length; j++) {
+            boolean isDuplicate = false;
+            for (int k = 0; k < numUnique; k++) {
+                if (nums[j] == uniqueNums[k]) {
+                    isDuplicate = true;
+                    break;
                 }
-                System.out.println();
+            }
+            if (!isDuplicate) {
+                uniqueNums[numUnique] = nums[j];
+                numUnique++;
             }
         }
 
+        int[] result = new int[numUnique];
+        for (int l = 0; l < numUnique; l++) {
+            result[l] = uniqueNums[l];
+        }
+
+        return result;
     }
+
+    /*
+     * *****************************************************************************
+     */
+
+    private static int countDayOccurancesInMonth(int[] DaysOfAttendance) {
+
+        int counter = 0;
+        for (int i = 1; i < 31; i++) {
+            for (int j = 0; j < DaysOfAttendance.length; j++) {
+                if (getDayString(i % 7).equals(getDayString(DaysOfAttendance[j])))
+                    counter++;
+            }
+        }
+        return counter;
+    }
+
+    /*
+    ***********************************************************************************
+    */
+    private static String formatOutput(String[] output, int count) {
+        String formattedOutput = "";
+        for (int i = 0; i < count; i++) {
+            formattedOutput += output[i];
+            if (i < count - 1) {
+                formattedOutput += "|";
+            }
+        }
+        formattedOutput += "|";
+        return formattedOutput;
+    }
+
+    /*
+    ***********************************************************************************
+    */
+
+    public static String intToString(int num) {
+        if (num == 0) {
+            return "0";
+        }
+        String str = "";
+        boolean isNegative = false;
+        if (num < 0) {
+            isNegative = true;
+            num = -num;
+        }
+        while (num > 0) {
+            char digit = (char) ('0' + num % 10);
+            str = digit + str;
+            num /= 10;
+        }
+        if (isNegative) {
+            str = "-" + str;
+        }
+        return str;
+    }
+
+    /*
+    ***********************************************************************************
+    */
+    // public static String formatRecord(int time, String dayOfWeek, int dayOfMonth) {
+    //     String formattedTime = time + ":00";
+    //     // while (formattedTime.length() < 3) {
+    //     // formattedTime = " " + formattedTime;
+    //     // }
+    //     String formattedDayOfWeek = " " + dayOfWeek;
+    //     // while (formattedDayOfWeek.length() < 3) {
+    //     // formattedDayOfWeek += " ";
+    //     // }
+    //     String formattedDayOfMonth = Integer.toString(dayOfMonth);
+    //     while (formattedDayOfMonth.length() < 3) {
+    //         formattedDayOfMonth = " " + formattedDayOfMonth;
+    //     }
+    //     return formattedTime + formattedDayOfWeek + formattedDayOfMonth + "|";
+    // }
+    /*
+    ***********************************************************************************
+    */
+
+    private static void displayRecords(String[] studentNames, int[][] attendanceRecords, int[] classSchedule) {
+
+        getAttendanceRecords(attendanceRecords, studentNames, classSchedule);
+        int[] DaysOfAttendanceWithoutDuplicates = getUniqueElements(classSchedule);
+        int size = countDayOccurancesInMonth(DaysOfAttendanceWithoutDuplicates);
+        System.out.println("Count Days: " + size);
+        int count = 0;
+        String[] output = new String[size];
+
+        for (int i = 1; i < 31; i++) {
+            // String[] output = new String[size];
+            // int count = 0;
+            for (int j = 0; j < classSchedule.length; j++) {
+                int[] timeDatePair = unpackIntegers(classSchedule[j]);
+                int time = timeDatePair[0];
+                int day = timeDatePair[1];
+                if (getDayString(i % 7).equals(getDayString(day)) && classSchedule[j] != -1) {
+
+                    String dayOfMonth = intToString(i);
+
+                    String delimiter = (dayOfMonth.length() == 2) ? " " : "  ";
+
+                    output[count] = time + ":00 " + getDayString(day) + delimiter + i;
+                    System.out.println(output[count]);
+
+                    count++;
+                }
+            }
+            // if(count > 0)
+            // {
+            // String formattedOutput = formatOutput(output, count);
+            // System.out.println(i + " " + formattedOutput);
+            // }
+        }
+
+        if (count > 0) {
+            String formattedOutput = formatOutput(output, count);
+            System.out.println(formattedOutput);
+        }
+        // 4:00 WE 2|
+        // 2:00 MO 7|
+        // 4:00 WE 9|
+        // "%1d:00%3s%3d|"
+    }
+    /*
+    ***********************************************************************************
+    */
+
+    private static void TTdisplayRecords(String[] studentNames, int[][] attendanceRecords, int[] classSchedule) {
+        for (int i = 1; i < 31; i++) {
+            String[] output = new String[31];
+            int count = 0;
+            for (int j = 1; j < 31; j++) {
+                if (attendanceRecords[i][j] != -1) {
+                    int[] timeDayPair = unpackIntegers(j);
+                    int time = timeDayPair[0];
+                    int day = timeDayPair[1] % 7;
+                    String dayOfWeek = getDayString(day);
+                    int attendanceStatus = attendanceRecords[i][j];
+                    output[count] = time + ":00 " + dayOfWeek + " " + attendanceStatus;
+                    count++;
+                }
+            }
+            if (count > 0) {
+                String formattedOutput = formatOutput(output, count);
+                System.out.println(formattedOutput);
+            }
+        }
+    }
+    /*
+    ***********************************************************************************
+    */
+
+    // private static void displayRecords(String[] studentNames, int[][]
+    // attendanceRecords, int[][] classSchedule) {
+
+    // // Display the attendance records in tabular form
+    // int numClasses = classSchedule.length;
+    // System.out.println("Class Schedule:");
+    // for (int i = 0; i < numClasses; i++) {
+    // int day = classSchedule[i][0];
+    // int time = classSchedule[i][1];
+    // System.out.print(time + ":00 ");
+    // switch (day) {
+    // case 1:
+    // System.out.print("MO");
+    // break;
+    // case 2:
+    // System.out.print("TU");
+    // break;
+    // case 3:
+    // System.out.print("WE");
+    // break;
+    // case 4:
+    // System.out.print("TH");
+    // break;
+    // case 5:
+    // System.out.print("FR");
+    // break;
+    // case 6:
+    // System.out.print("SA");
+    // break;
+    // case 7:
+    // System.out.print("SU");
+    // break;
+    // }
+    // System.out.print(" " + (i + 1) + "|");
+    // }
+    // System.out.println();
+    // for (int i = 0; i < 10; i++) {
+    // if (studentNames[i] != null) {
+    // System.out.print(studentNames[i] + " |");
+    // for (int j = 0; j < numClasses; j++) {
+    // if (attendanceRecords[i][j] == 1) {
+    // System.out.print(" HERE ");
+    // } else if (attendanceRecords[i][j] == -1) {
+    // System.out.print(" ABSENT ");
+    // } else {
+    // System.out.print(" ");
+    // }
+    // System.out.print("|");
+    // }
+    // System.out.println();
+    // }
+    // }
+
+    // }
 
     /*
     ***********************************************************************************
