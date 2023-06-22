@@ -41,26 +41,33 @@ public class Program {
     */
 
     public static void main(String[] args) {
-        String[] studentNames = new String[10];
-        int HOURS = 6;
-        int DAYS = 31;
-        int[] classSchedule = new int[10];
+        String[] studentNamesTemp = new String[10];
+        int[] classScheduleTemp = new int[10];
 
-        for (int i = 0; i < classSchedule.length; i++)
-            classSchedule[i] = -1;
+        int size = 0;
+        size = getStudentsNames(studentNamesTemp, null, 0);
+        int NBR_STUD = size;
 
-        int MAX_NBR_STUD = 10;
+        String[] studentNames = new String[size];
+        getStudentsNames(studentNamesTemp, studentNames, size);
+
+        // getClassSchedule(classSchedule);
+
+        size = 0;
+        size = getClassSchedule(classScheduleTemp, null, 0);
+
+        int[] classSchedule = new int[size];
+        getClassSchedule(classScheduleTemp, classSchedule, size);
+
+        insertionSort(classSchedule);
+
         int MAX_TIME_DAY_PAIR = packIntegers(6, 31); // 223
-
-        int[][] attendanceRecords = new int[MAX_NBR_STUD][MAX_TIME_DAY_PAIR];
+        int[][] attendanceRecords = new int[NBR_STUD][MAX_TIME_DAY_PAIR];
         for (int i = 0; i < attendanceRecords.length; i++) {
             for (int j = 0; j < attendanceRecords[i].length; j++) {
                 attendanceRecords[i][j] = -1;
             }
         }
-
-        getStudentsNames(studentNames);
-        getClassSchedule(classSchedule);
 
         // int[] arr = getUniqueElements(classSchedule);
 
@@ -103,6 +110,24 @@ public class Program {
     }
 
     /*
+    **
+    */
+
+    private static void insertionSort(int[] arr) {
+        int n = arr.length;
+        for (int i = 1; i < n; ++i) {
+            int key = arr[i];
+            int j = i - 1;
+
+            while (j >= 0 && arr[j] > key) {
+                arr[j + 1] = arr[j];
+                j = j - 1;
+            }
+            arr[j + 1] = key;
+        }
+    }
+
+    /*
     ***********************************************************************************
     */
 
@@ -124,26 +149,30 @@ public class Program {
     ***********************************************************************************
     */
 
-    private static void getStudentsNames(String[] studentNames) {
+    private static int getStudentsNames(String[] T1, String[] T2, int size) {
 
-        // Prompt the user to enter the student names
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter student names(max 10, len 10), one per line. Enter '.' when done.");
+        if (size == 0) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter student names(max 10, len 10), one per line. Enter '.' when done.");
 
-        for (int i = 0; i < 10; i++) {
-            String name = scanner.nextLine();
-            if (name.equals(END_OF_INPUT))
-                break;
+            for (int i = 0; i < 10; i++) {
+                String name = scanner.nextLine();
+                if (name.equals(END_OF_INPUT))
+                    break;
 
-            if (name.length() > 10 || hasSpace(name))
-                terminate();
-            studentNames[i] = name;
-        }
+                if (name.length() > 10 || hasSpace(name))
+                    terminate();
+                T1[i] = name;
+                size++;
+            }
+            // scanner.close(); // don't close the scanner, we need it later, or the next
+            // function will throw an exception
+        } else
+            for (int i = 0; i < size; i++)
+                T2[i] = T1[i];
 
-        // scanner.close(); // don't close the scanner, we need it later, or the next
-        // function will throw an exception
+        return size;
     }
-
     /*
     ***********************************************************************************
     */
@@ -222,29 +251,30 @@ public class Program {
     ***********************************************************************************
     */
 
-    private static void getClassSchedule(int[] classSchedule) {
+    private static int getClassSchedule(int[] T1, int[] T2, int numClasses) {
 
-        System.out.println("Enter class schedule, one per line [hour day] Enter '.' when done.");
-        Scanner scanner = new Scanner(System.in);
+        if (numClasses == 0) {
+            System.out.println("Enter class schedule, one per line [hour day] Enter '.' when done.");
+            Scanner scanner = new Scanner(System.in);
 
-        int numClasses = 0;
-        while (numClasses < 10) {
-            String input = scanner.nextLine();
-            if (input.equals(END_OF_INPUT)) {
-                break;
+            while (numClasses < 10) {
+                String input = scanner.nextLine();
+                if (input.equals(END_OF_INPUT)) {
+                    break;
+                }
+                int dayTime = parseDayTime(input);
+                if (isDuplicate(T1, dayTime))
+                    terminate();
+                T1[numClasses] = dayTime;
+                numClasses++;
             }
-            int dayTime = parseDayTime(input);
-            // int T[] = unpackIntegers(dayTime);
-            // System.out.println("time: " + T[0] + " day: " + getDayString(T[1]));
-            if (isDuplicate(classSchedule, dayTime))
-                terminate();
-            classSchedule[numClasses] = dayTime;
-
-            numClasses++;
-        }
+        } else
+            for (int i = 0; i < numClasses; i++)
+                T2[i] = T1[i];
         // checkLimitClassPerWeek(classSchedule); // no need to check this, the while
         // loop above already does
         // scanner.close(); // dont close the scanner, we need it next
+        return numClasses;
     }
 
     /*
@@ -258,6 +288,10 @@ public class Program {
         }
         return false;
     }
+
+    /*
+    ***********************************************************************************
+    */
 
     private static int getAttendanceStatus(String input) {
         if (input == null)
@@ -285,15 +319,10 @@ public class Program {
     */
 
     private static void checkIfTimeExistInSchedule(int[] classSchedule, int time) {
-        int i = 0;
-
-        while (i < classSchedule.length && classSchedule[i] != -1) {
+        for (int i = 0; i < classSchedule.length; i++) {
             int T[] = unpackIntegers(classSchedule[i]);
-            // System.out.println(classSchedule[i] + " " + T[0] + " " + getDayString(T[1]));
             if (T[0] == time)
                 return;
-
-            i++;
         }
         terminate();
     }
@@ -303,12 +332,11 @@ public class Program {
     */
 
     private static void checkIfDateCorrespondToDayInSchedule(int[] classSchedule, int date) {
-        int i = 0;
-        while (i < classSchedule.length && classSchedule[i] != -1) {
+
+        for (int i = 0; i < classSchedule.length; i++) {
             int T[] = unpackIntegers(classSchedule[i]);
             if (getDayString(T[1]).equals(getDayString(date % 7)))
                 return;
-            i++;
         }
         terminate();
     }
@@ -367,7 +395,6 @@ public class Program {
     */
 
     private static void getAttendanceRecords(int[][] attendanceRecords, String[] studentNames, int[] classSchedule) {
-
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter attendance records, one per line. Enter '.' when done.");
 
@@ -375,7 +402,6 @@ public class Program {
             String input = scanner.nextLine();
             if (input.equals(END_OF_INPUT))
                 break;
-
             parseAttendanceRecords(attendanceRecords, studentNames, classSchedule, input);
         }
         scanner.close(); // close the scanner, we don't need it anymore
@@ -424,12 +450,20 @@ public class Program {
      * *****************************************************************************
      */
 
-    private static int countDayOccurancesInMonth(int[] DaysOfAttendance) {
+    private static int countDayOccurancesInMonth(int[] schedule) {
 
         int counter = 0;
+        // for (int i = 1; i < 31; i++) {
+        // for (int j = 0; j < DaysOfAttendance.length; j++) {
+        // if (getDayString(i % 7).equals(getDayString(DaysOfAttendance[j])))
+        // counter++;
+        // }
+        // }
+
         for (int i = 1; i < 31; i++) {
-            for (int j = 0; j < DaysOfAttendance.length; j++) {
-                if (getDayString(i % 7).equals(getDayString(DaysOfAttendance[j])))
+            for (int j = 0; j < schedule.length; j++) {
+                int T[] = unpackIntegers(schedule[j]);
+                if (getDayString(i % 7).equals(getDayString(T[1])))
                     counter++;
             }
         }
@@ -440,7 +474,8 @@ public class Program {
     ***********************************************************************************
     */
     private static String formatOutput(String[] output, int count) {
-        String formattedOutput = "";
+        // System.out.print(" ");
+        String formattedOutput = "           ";
         for (int i = 0; i < count; i++) {
             formattedOutput += output[i];
             if (i < count - 1) {
@@ -479,20 +514,21 @@ public class Program {
     /*
     ***********************************************************************************
     */
-    // public static String formatRecord(int time, String dayOfWeek, int dayOfMonth) {
-    //     String formattedTime = time + ":00";
-    //     // while (formattedTime.length() < 3) {
-    //     // formattedTime = " " + formattedTime;
-    //     // }
-    //     String formattedDayOfWeek = " " + dayOfWeek;
-    //     // while (formattedDayOfWeek.length() < 3) {
-    //     // formattedDayOfWeek += " ";
-    //     // }
-    //     String formattedDayOfMonth = Integer.toString(dayOfMonth);
-    //     while (formattedDayOfMonth.length() < 3) {
-    //         formattedDayOfMonth = " " + formattedDayOfMonth;
-    //     }
-    //     return formattedTime + formattedDayOfWeek + formattedDayOfMonth + "|";
+    // public static String formatRecord(int time, String dayOfWeek, int dayOfMonth)
+    // {
+    // String formattedTime = time + ":00";
+    // // while (formattedTime.length() < 3) {
+    // // formattedTime = " " + formattedTime;
+    // // }
+    // String formattedDayOfWeek = " " + dayOfWeek;
+    // // while (formattedDayOfWeek.length() < 3) {
+    // // formattedDayOfWeek += " ";
+    // // }
+    // String formattedDayOfMonth = Integer.toString(dayOfMonth);
+    // while (formattedDayOfMonth.length() < 3) {
+    // formattedDayOfMonth = " " + formattedDayOfMonth;
+    // }
+    // return formattedTime + formattedDayOfWeek + formattedDayOfMonth + "|";
     // }
     /*
     ***********************************************************************************
@@ -502,130 +538,89 @@ public class Program {
 
         getAttendanceRecords(attendanceRecords, studentNames, classSchedule);
         int[] DaysOfAttendanceWithoutDuplicates = getUniqueElements(classSchedule);
-        int size = countDayOccurancesInMonth(DaysOfAttendanceWithoutDuplicates);
+        // int size = countDayOccurancesInMonth(DaysOfAttendanceWithoutDuplicates);
+
+        int size = countDayOccurancesInMonth(classSchedule);
+
         System.out.println("Count Days: " + size);
         int count = 0;
         String[] output = new String[size];
+        int[] timeDatePairOfMonth = new int[size]; // I already stored the timeDatePair in the attendanceRecords array,
+                                                   // "John 4 9 HERE" so it gonna be easy to get the timeDatePair of the
+                                                   // month for students printing later
 
         for (int i = 1; i < 31; i++) {
-            // String[] output = new String[size];
-            // int count = 0;
             for (int j = 0; j < classSchedule.length; j++) {
-                int[] timeDatePair = unpackIntegers(classSchedule[j]);
-                int time = timeDatePair[0];
-                int day = timeDatePair[1];
-                if (getDayString(i % 7).equals(getDayString(day)) && classSchedule[j] != -1) {
+                int[] timeDayPair = unpackIntegers(classSchedule[j]);
+                int time = timeDayPair[0];
+                int day = timeDayPair[1];
+                // System.out.println("[" + time + " , " + getDayString(day) + "]");
+                // System.out.println("========");
+                if (getDayString(i % 7).equals(getDayString(day))) {
 
                     String dayOfMonth = intToString(i);
 
                     String delimiter = (dayOfMonth.length() == 2) ? " " : "  ";
+                    // System.out.println("Count : " + count);
 
+                    timeDatePairOfMonth[count] = packIntegers(time, i);
                     output[count] = time + ":00 " + getDayString(day) + delimiter + i;
-                    System.out.println(output[count]);
+                    // String temp = time + ":00 " + getDayString(day) + delimiter + i;
+                    // System.out.println(temp);
+                    // System.out.println(output[count]);
 
                     count++;
+
+                    // break;
                 }
             }
-            // if(count > 0)
-            // {
-            // String formattedOutput = formatOutput(output, count);
-            // System.out.println(i + " " + formattedOutput);
-            // }
         }
+
+        System.out.println("count = " + count);
 
         if (count > 0) {
             String formattedOutput = formatOutput(output, count);
             System.out.println(formattedOutput);
         }
-        // 4:00 WE 2|
-        // 2:00 MO 7|
-        // 4:00 WE 9|
-        // "%1d:00%3s%3d|"
-    }
-    /*
-    ***********************************************************************************
-    */
 
-    private static void TTdisplayRecords(String[] studentNames, int[][] attendanceRecords, int[] classSchedule) {
-        for (int i = 1; i < 31; i++) {
-            String[] output = new String[31];
-            int count = 0;
-            for (int j = 1; j < 31; j++) {
-                if (attendanceRecords[i][j] != -1) {
-                    int[] timeDayPair = unpackIntegers(j);
-                    int time = timeDayPair[0];
-                    int day = timeDayPair[1] % 7;
-                    String dayOfWeek = getDayString(day);
-                    int attendanceStatus = attendanceRecords[i][j];
-                    output[count] = time + ":00 " + dayOfWeek + " " + attendanceStatus;
-                    count++;
-                }
+        // for (int i = 0; i < studentNames.length; i++) {
+        // System.out.println(studentNames[i]);
+        // for (int k = 0; k < timeDatePairOfMonth.length; k++) {
+        // // System.out.println("timeDatePairOfMonth[k]: " + timeDatePairOfMonth[k]);
+        // int attendanceStatus = attendanceRecords[i][timeDatePairOfMonth[k]];
+        // if (attendanceStatus == -1)
+        // System.out.println(" ");
+        // else if(attendanceStatus == 0)
+        // System.out.println(-1);
+        // else
+        // System.out.println(1);
+        // }
+        // }
+
+        for (int i = 0; i < studentNames.length; i++) {
+            System.out.printf("%-10s", studentNames[i]);
+
+            for (int k = 0; k < timeDatePairOfMonth.length; k++) {
+                int attendanceStatus = attendanceRecords[i][timeDatePairOfMonth[k]];
+
+                if (attendanceStatus == -1)
+                    System.out.printf("|          ");
+                else if (attendanceStatus == 0)
+                    System.out.printf("|         -1");
+                else
+                    System.out.printf("|          1");
             }
-            if (count > 0) {
-                String formattedOutput = formatOutput(output, count);
-                System.out.println(formattedOutput);
-            }
+
+            System.out.println("|");
         }
+
+        System.out.println();
+        for (int i = 0; i < timeDatePairOfMonth.length; i++) {
+            int T[] = unpackIntegers(timeDatePairOfMonth[i]);
+            System.out.println(timeDatePairOfMonth[i] + " --> " + T[0] + "  " + T[1]);
+        }
+
     }
-    /*
-    ***********************************************************************************
-    */
-
-    // private static void displayRecords(String[] studentNames, int[][]
-    // attendanceRecords, int[][] classSchedule) {
-
-    // // Display the attendance records in tabular form
-    // int numClasses = classSchedule.length;
-    // System.out.println("Class Schedule:");
-    // for (int i = 0; i < numClasses; i++) {
-    // int day = classSchedule[i][0];
-    // int time = classSchedule[i][1];
-    // System.out.print(time + ":00 ");
-    // switch (day) {
-    // case 1:
-    // System.out.print("MO");
-    // break;
-    // case 2:
-    // System.out.print("TU");
-    // break;
-    // case 3:
-    // System.out.print("WE");
-    // break;
-    // case 4:
-    // System.out.print("TH");
-    // break;
-    // case 5:
-    // System.out.print("FR");
-    // break;
-    // case 6:
-    // System.out.print("SA");
-    // break;
-    // case 7:
-    // System.out.print("SU");
-    // break;
-    // }
-    // System.out.print(" " + (i + 1) + "|");
-    // }
-    // System.out.println();
-    // for (int i = 0; i < 10; i++) {
-    // if (studentNames[i] != null) {
-    // System.out.print(studentNames[i] + " |");
-    // for (int j = 0; j < numClasses; j++) {
-    // if (attendanceRecords[i][j] == 1) {
-    // System.out.print(" HERE ");
-    // } else if (attendanceRecords[i][j] == -1) {
-    // System.out.print(" ABSENT ");
-    // } else {
-    // System.out.print(" ");
-    // }
-    // System.out.print("|");
-    // }
-    // System.out.println();
-    // }
-    // }
-
-    // }
-
     /*
     ***********************************************************************************
     */
@@ -637,8 +632,6 @@ public class Program {
 
     private static int[] unpackIntegers(int packedVal) {
         int[] unpackedInts = new int[2];
-        // unpackedInts[0] = (packedVal == 0) ? -1 : (packedVal >> 5) & 0x07;
-        // unpackedInts[1] = (packedVal == 0) ? -1 : packedVal & 0x1F;
 
         unpackedInts[0] = (packedVal >> 5) & 0x07;
         unpackedInts[1] = packedVal & 0x1F;
@@ -646,3 +639,25 @@ public class Program {
         return unpackedInts;
     }
 }
+
+// Enter student names(max 10, len 10), one per line. Enter '.' when done.
+// AA
+// BBB
+// CCCC
+// DDDDD
+// EEEEEEEE
+// .
+// Enter class schedule, one per line [hour day] Enter '.' when done.
+// 2 MO
+// 4 WE
+// 5 TU
+// 6 TU
+// 2 WE
+// .
+// Enter attendance records, one per line. Enter '.' when done.
+// BBB 2 28 NOT_HERE
+// BBB 4 9 HERE
+// AA 6 15 HERE
+// AA 5 15 HERE
+// .
+// Count Days: 14
