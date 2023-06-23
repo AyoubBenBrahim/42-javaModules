@@ -61,7 +61,7 @@ public class Program {
         for (int row = 10; row >= 0; row--) {
 
             for (int col = 0; col < 10; col++) {
-                if (charCounts[col][1] * 10 / maxCount == row) {
+                if (charCounts[col][1] * 10 / maxCount == row && charCounts[col][1] > 0) {
                     System.out.printf("%3d ", charCounts[col][1]);
                 } else if (charCounts[col][1] * 10 / maxCount > row) {
                     System.out.print("  # ");
@@ -83,7 +83,12 @@ public class Program {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
+        if (scanner.hasNextLine() == false)
+            return ;
         String str = scanner.nextLine();
+        if (str.length() == 0)
+            return ;
+        
 
         int[][] charCounts = new int[65535][2];
         /*
@@ -108,6 +113,7 @@ public class Program {
          * }
          */
 
+        
         printHistogram(TopCountsArray);
 
         scanner.close();

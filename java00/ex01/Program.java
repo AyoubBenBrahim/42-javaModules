@@ -4,41 +4,18 @@ import java.util.Scanner;
 
 public class Program {
 
-    private static double ft_sqrt(double X) {
-        for (int i = 1; i < X; ++i) {
-            int p = i * i;
-            if (p == X) {
-                // perfect square
-                return i;
-            }
-            if (p > X) {
-                // found left part of decimal
-                return ft_sqrt(X, i - 1, i);
-            }
-        }
-        return Double.NaN;
+    private static void terminate() {
+        System.err.println("IllegalArgument");
+        System.exit(-1);
     }
 
-    private static double ft_sqrt(double X, double low, double high) {
-        double mid = (low + high) / 2;
-        double p = mid * mid;
-
-        if (p == X || Double.toString(p).length() >= 16) {
-            return mid;
-        }
-        if (p < X) {
-            return ft_sqrt(X, mid, high);
-        }
-        return ft_sqrt(X, low, mid);
-    }
-
-    private static void isPrime(double n) {
+    private static void isPrime(int n) {
         int iter = 0;
-        if (n <= 1) {
-            System.out.println("IllegalArgument");
-            System.exit(-1);
-        }
-        for (int i = 2; i <= ft_sqrt(n); i++) {
+
+        if (n <= 1)
+            terminate();
+
+        for (int i = 2; i * i <= n; i++) {
             iter++;
             if (n % i == 0) {
                 System.out.println("false " + iter);
@@ -49,11 +26,11 @@ public class Program {
     }
 
     public static void main(String[] args) {
-
         Scanner scanner = new Scanner(System.in);
-        System.out.print("-> ");
-        double input = scanner.nextDouble();
+        if (!scanner.hasNextInt())
+            return;
+            
+        int input = scanner.nextInt();
         isPrime(input);
     }
-
 }
