@@ -9,6 +9,10 @@ public class Program {
         System.exit(-1);
     }
 
+    /*
+    ***********************************************************************************
+    */
+
     private static void isPrime(int n) {
         int iter = 0;
 
@@ -25,11 +29,15 @@ public class Program {
         System.out.println("true " + (iter + 1));
     }
 
+    /*
+    ***********************************************************************************
+    */
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         if (!scanner.hasNextInt())
             return;
-            
+
         int input = scanner.nextInt();
         isPrime(input);
     }

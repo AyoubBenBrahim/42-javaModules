@@ -15,6 +15,10 @@ public class Program {
         return sum;
     }
 
+    /*
+    ***********************************************************************************
+    */
+
     private static boolean isPrime(int n) {
         if (n <= 1) {
             return false;
@@ -25,6 +29,10 @@ public class Program {
         }
         return true;
     }
+
+    /*
+    ***********************************************************************************
+    */
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -44,7 +52,7 @@ public class Program {
             }
         }
         scanner.close();
-        System.out.println("Count of coffee-request - " + primeCounter );
+        System.out.println("Count of coffee-request - " + primeCounter);
     }
 }
 

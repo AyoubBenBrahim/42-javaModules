@@ -17,6 +17,10 @@ public class Program {
         }
     }
 
+    /*
+    ***********************************************************************************
+    */
+
     private static void initTopCountsFromCharCounts(int[][] charCounts, int[][] TopCountsArray) {
         // Initialize the top counts array with the first 10 elements from the
         // charCounts array
@@ -25,6 +29,10 @@ public class Program {
             TopCountsArray[i][1] = charCounts[i][1];
         }
     }
+
+    /*
+    ***********************************************************************************
+    */
 
     private static void sortArray(int[][] charCounts) {
         for (int i = 0; i < charCounts.length - 1; i++) {
@@ -42,6 +50,10 @@ public class Program {
         }
     }
 
+    /*
+    ***********************************************************************************
+    */
+
     private static void compareCountsToTop(int[][] charCounts, int[][] TopCountsArray) {
         // Iterate over the remaining elements in the charCounts array and compare them
         // to the top counts array
@@ -54,6 +66,10 @@ public class Program {
             }
         }
     }
+
+    /*
+    ***********************************************************************************
+    */
 
     private static void printHistogram(int[][] charCounts) {
         int maxCount = charCounts[0][1];
@@ -80,15 +96,18 @@ public class Program {
         }
     }
 
+    /*
+    ***********************************************************************************
+    */
+
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
         if (scanner.hasNextLine() == false)
-            return ;
+            return;
         String str = scanner.nextLine();
         if (str.length() == 0)
-            return ;
-        
+            return;
 
         int[][] charCounts = new int[65535][2];
         /*
@@ -113,11 +132,9 @@ public class Program {
          * }
          */
 
-        
         printHistogram(TopCountsArray);
 
         scanner.close();
 
     }
-
 }

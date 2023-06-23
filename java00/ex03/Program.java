@@ -9,6 +9,10 @@ public class Program {
         System.exit(-1);
     }
 
+    /*
+    ***********************************************************************************
+    */
+
     private static long powerOfTen(int exponent) {
         if (exponent < 0)
             terminate();
@@ -19,6 +23,10 @@ public class Program {
         }
         return result;
     }
+
+    /*
+    ***********************************************************************************
+    */
 
     private static long getStudentsGrades(String digitsStream, long studentsData) {
 
@@ -49,13 +57,17 @@ public class Program {
         return (studentsData * 10 + minGrade);
     }
 
+    /*
+    ***********************************************************************************
+    */
+
     private static void chartSudentsGrades(long studentsData, int totalWeeks) {
         int weekCounter = 1;
         // int division = (int) Math.pow(10, totalWeeks - 2);
         long division = powerOfTen(totalWeeks - 2);
         while (division > 0) {
             System.out.print("Week " + weekCounter + " ");
-            int digit = (int)(studentsData / division);
+            int digit = (int) (studentsData / division);
             studentsData = studentsData % division;
             division = division / 10;
             for (int j = 0; j < digit; j++) {
@@ -66,9 +78,14 @@ public class Program {
         }
     }
 
+    /*
+    ***********************************************************************************
+    */
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        long studentsData = 0; // shit i used int instead of long, and alwys got this wrong "studentsData = studentsData * 10 + minGrade" when reaching big number
+        long studentsData = 0; // shit i used int instead of long, and alwys got this wrong "studentsData =
+                               // studentsData * 10 + minGrade" when reaching big number
         int currentWeek = 1;
         while (true) {
             String weekStr = scanner.nextLine();
@@ -139,5 +156,3 @@ public class Program {
 // Week 17
 // 5 6 7 8 9
 // 42
-
-
