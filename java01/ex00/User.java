@@ -1,13 +1,13 @@
 package java01.ex00;
 
 public class User {
-    private static int nextID = 1;
+    private static Integer nextID = 1;
 
-    private final int identifier;
+    private final Integer identifier;
     private String name;
-    private int balance;
+    private Integer balance;
 
-    public User(String name, int balance) {
+    public User(String name, Integer balance) {
         this.identifier = nextID;
         nextID++;
 
@@ -15,10 +15,10 @@ public class User {
         this.balance = balance;
 
         if (balance < 0)
-            balance = 0;
+            this.balance = 0;
     }
 
-    public int getIdentifier() {
+    public Integer getIdentifier() {
         return identifier;
     }
 
@@ -30,11 +30,11 @@ public class User {
         this.name = name;
     }
 
-    public int getBalance() {
+    public Integer getBalance() {
         return balance;
     }
 
-    public void setBalance(int balance) {
+    public void setBalance(Integer balance) {
         this.balance = balance;
         if (balance < 0)
             this.balance = 0;

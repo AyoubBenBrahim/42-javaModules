@@ -29,8 +29,5 @@ public class Program {
         transaction2.performTransfer();
         System.out.println();
         System.out.println("Transaction 1 After CREDIT (+) Transaction:\n" + transaction2.toString());
-
-
-
     }
 }

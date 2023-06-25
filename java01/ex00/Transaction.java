@@ -8,13 +8,13 @@ public class Transaction {
         DEBIT, CREDIT, INVALID
     }
 
-    final UUID identifier;
+    private final UUID identifier;
     private User recipient;
     private User sender;
-    private int transferAmount;
-    TransferCategory transferCategory;
+    private Integer transferAmount;
+    private TransferCategory transferCategory;
 
-    public Transaction(User recipiente, User sender, int transferAmount, TransferCategory transferCategory) {
+    public Transaction(User recipiente, User sender, Integer transferAmount, TransferCategory transferCategory) {
         this.identifier = UUID.randomUUID();
         this.recipient = recipiente;
         this.sender = sender;
@@ -22,7 +22,7 @@ public class Transaction {
         this.transferCategory = transferCategory;
 
         if (transferAmount < 0)
-            transferAmount = 0;
+            this.transferAmount = 0;
 
         if (transferCategory == TransferCategory.DEBIT || transferCategory == TransferCategory.CREDIT)
             this.transferCategory = transferCategory;
@@ -51,16 +51,16 @@ public class Transaction {
         this.sender = sender;
     }
 
-    public int getTransferAmount() {
+    public Integer getTransferAmount() {
         return transferAmount;
     }
 
-    public void setTransferAmount(int transferAmount) {
+    public void setTransferAmount(Integer transferAmount) {
         if (transferCategory != TransferCategory.INVALID) {
             this.transferAmount = transferAmount;
         } else {
             System.out.println("Invalid transfer category");
-            return;
+            System.exit(0);
         }
         if (transferAmount < 0) {
             this.transferAmount = 0;
@@ -76,13 +76,12 @@ public class Transaction {
             this.transferCategory = transferCategory;
         else
             this.transferCategory = TransferCategory.INVALID;
-
     }
 
     public void performTransfer() {
         if (sender.getBalance() < transferAmount) {
             System.out.println("Insufficient funds");
-            return;
+            System.exit(0);
         }
 
         if (transferCategory == TransferCategory.DEBIT) {
@@ -90,17 +89,34 @@ public class Transaction {
             sender.setBalance(sender.getBalance() - transferAmount);
             // Add transfer amount to recipient's account
             recipient.setBalance(recipient.getBalance() + transferAmount);
+
+            String output = sender.getName() + " -> " + recipient.getName() + ", -" + transferAmount + ", OUTCOME, "
+                    + identifier.toString();
+            System.out.println(output);
+            output = recipient.getName() + " -> " + sender.getName() + ", +" + transferAmount + ", INCOME, "
+                    + identifier.toString();
+            System.out.println(output);
         } else if (transferCategory == TransferCategory.CREDIT) {
             // Add transfer amount to sender's account
             sender.setBalance(sender.getBalance() + transferAmount);
             // Deduct transfer amount from recipient's account
             recipient.setBalance(recipient.getBalance() - transferAmount);
+
+            // String output = recipient.getName() + " -> " + sender.getName() + ", +" +
+            // transferAmount + ", INCOME, " + identifier.toString();
+            // System.out.println(output);
+
+            String output = recipient.getName() + " -> " + sender.getName() + ", -" + transferAmount + ", OUTCOME, "
+                    + identifier.toString();
+            System.out.println(output);
+            output = sender.getName() + " -> " + recipient.getName() + ", +" + transferAmount + ", INCOME, "
+                    + identifier.toString();
+            System.out.println(output);
         } else {
             System.out.println("Invalid transfer category");
-            return;
+            System.exit(0);
         }
 
-        System.out.println("Transfer successful");
     }
 
     public String toString() {
