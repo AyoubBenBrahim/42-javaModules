@@ -28,6 +28,6 @@ public class Program {
         System.out.println("Transaction 2 Details:\n" + transaction2.toString());
         transaction2.performTransfer();
         System.out.println();
-        System.out.println("Transaction 1 After CREDIT (+) Transaction:\n" + transaction2.toString());
+        System.out.println("Transaction 2 After CREDIT (+) Transaction:\n" + transaction2.toString());
     }
 }

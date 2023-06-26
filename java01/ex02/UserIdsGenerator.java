@@ -1,4 +1,4 @@
-package java01.ex01;
+package java01.ex02;
 
 public class UserIdsGenerator {
 

@@ -31,29 +31,18 @@ public class Transaction {
 
     }
 
-    public String getUuid() {
-        return identifier.toString();
+    public String getUuid() {return identifier.toString();
     }
 
-    public User getRecipient() {
-        return recipient;
-    }
+    public User getRecipient() {return recipient;}
 
-    public void setRecipient(User recipient) {
-        this.recipient = recipient;
-    }
+    public void setRecipient(User recipient) {this.recipient = recipient;}
 
-    public User getSender() {
-        return sender;
-    }
+    public User getSender() {return sender;}
 
-    public void setSender(User sender) {
-        this.sender = sender;
-    }
+    public void setSender(User sender) {this.sender = sender;}
 
-    public Integer getTransferAmount() {
-        return transferAmount;
-    }
+    public Integer getTransferAmount() {return transferAmount;}
 
     public void setTransferAmount(Integer transferAmount) {
         if (transferCategory != TransferCategory.INVALID) {
@@ -67,9 +56,7 @@ public class Transaction {
         }
     }
 
-    public String getTransferCategory() {
-        return transferCategory.toString();
-    }
+    public String getTransferCategory() {return transferCategory.toString();}
 
     public void setTransferCategory(TransferCategory transferCategory) {
         if (transferCategory == TransferCategory.DEBIT || transferCategory == TransferCategory.CREDIT)
