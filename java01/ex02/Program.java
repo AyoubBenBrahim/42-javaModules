@@ -26,13 +26,13 @@ public class Program {
         usersList.addUser(user2);
         usersList.addUser(user3);
 
-        try {
+        // try {
             System.out.println(usersList.getUserById(2));
             System.out.println(usersList.getUserByIndex(2));
             System.out.println(usersList.getUserByIndex(3));
-        } catch (UserNotFoundException e) {
-            System.out.println("UserNotFoundException");
-        }
+        // } catch (UserNotFoundException e) {
+        //     System.out.println("UserNotFoundException");
+        // }
 
         usersList.addUser(user4);
         usersList.addUser(user5);
@@ -43,33 +43,33 @@ public class Program {
         System.out.println(usersList.getUserById(8));
         System.out.println("usersList.getcount() = " + usersList.getUsersCount());
 
-        try {
+        // try {
             usersList.addUser(user9);
             usersList.addUser(user10);
-        } catch (UserNotFoundException e) {
-            System.out.println("UserNotFoundException");
-        }
+        // } catch (UserNotFoundException e) {
+        //     System.out.println("UserNotFoundException");
+        // }
 
         System.out.println("usersList.getcount() = " + usersList.getUsersCount());
 
-        try {
+        // try {
             usersList.addUser(user11);
             usersList.addUser(user12);
             usersList.addUser(user13);
             usersList.addUser(user14);
-        } catch (UserNotFoundException e) {
-            System.out.println("UserNotFoundException");
-        }
+        // } catch (UserNotFoundException e) {
+        //     System.out.println("UserNotFoundException");
+        // }
 
         System.out.println("usersList.getcount() = " + usersList.getUsersCount());
 
-        try {
+        // try {
             System.out.println(usersList.getUserByIndex(0));
             System.out.println(usersList.getUserByIndex(1));
             usersList.addUser(null);
-        } catch (UserNotFoundException e) {
-            System.out.println("UserNotFoundException");
-        }
+        // } catch (UserNotFoundException e) {
+        //     System.out.println("UserNotFoundException");
+        // }
     }
 
 }

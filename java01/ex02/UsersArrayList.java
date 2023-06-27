@@ -12,7 +12,7 @@ public class UsersArrayList implements UsersList {
     }
 
     @Override
-    public void addUser(User user) {
+    public void addUser(User user) throws UserNotFoundException {
 
         if (user == null) {
             throw new UserNotFoundException();
@@ -41,7 +41,7 @@ public class UsersArrayList implements UsersList {
     }
 
     @Override
-    public User getUserById(Integer id) {
+    public User getUserById(Integer id) throws UserNotFoundException {
         for (User user : usersList) {
             if (user.getIdentifier() == id) {
                 return user;
@@ -51,7 +51,7 @@ public class UsersArrayList implements UsersList {
     }
 
     @Override
-    public User getUserByIndex(Integer index) {
+    public User getUserByIndex(Integer index) throws UserNotFoundException {
 
         for (int i = 0; i < usersList.length; i++) {
             if (i == index && usersList[i] != null) {
@@ -71,5 +71,11 @@ public class UsersArrayList implements UsersList {
         }
         return count;
     }
+
+    // public static class UserNotFoundException extends Exception {
+    //     public UserNotFoundException() {
+    //         super("User not found");
+    //     }
+    // }
 
 }

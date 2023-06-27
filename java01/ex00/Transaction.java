@@ -72,31 +72,25 @@ public class Transaction {
         }
 
         if (transferCategory == TransferCategory.DEBIT) {
-            // Deduct transfer amount from sender's account
             sender.setBalance(sender.getBalance() - transferAmount);
-            // Add transfer amount to recipient's account
             recipient.setBalance(recipient.getBalance() + transferAmount);
+
+
 
             String output = sender.getName() + " -> " + recipient.getName() + ", -" + transferAmount + ", OUTCOME, "
                     + identifier.toString();
             System.out.println(output);
-            output = recipient.getName() + " -> " + sender.getName() + ", +" + transferAmount + ", INCOME, "
-                    + identifier.toString();
+            // output = recipient.getName() + " -> " + sender.getName() + ", +" + transferAmount + ", INCOME, "
+            //         + identifier.toString();
             System.out.println(output);
         } else if (transferCategory == TransferCategory.CREDIT) {
-            // Add transfer amount to sender's account
             sender.setBalance(sender.getBalance() + transferAmount);
-            // Deduct transfer amount from recipient's account
             recipient.setBalance(recipient.getBalance() - transferAmount);
 
-            // String output = recipient.getName() + " -> " + sender.getName() + ", +" +
-            // transferAmount + ", INCOME, " + identifier.toString();
+            // String output = recipient.getName() + " -> " + sender.getName() + ", -" + transferAmount + ", OUTCOME, "
+            //         + identifier.toString();
             // System.out.println(output);
-
-            String output = recipient.getName() + " -> " + sender.getName() + ", -" + transferAmount + ", OUTCOME, "
-                    + identifier.toString();
-            System.out.println(output);
-            output = sender.getName() + " -> " + recipient.getName() + ", +" + transferAmount + ", INCOME, "
+            String output = sender.getName() + " -> " + recipient.getName() + ", +" + transferAmount + ", INCOME, "
                     + identifier.toString();
             System.out.println(output);
         } else {
