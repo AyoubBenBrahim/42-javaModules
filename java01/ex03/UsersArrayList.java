@@ -1,4 +1,4 @@
-package java01.ex02;
+package java01.ex03;
 
 public class UsersArrayList implements UsersList {
 

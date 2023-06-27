@@ -1,17 +1,28 @@
-package java01.ex02;
+package java01.ex03;
 
 public class User {
     private final Integer identifier;
     private String name;
     private Integer balance;
+    private TransactionsList transactionsList;
 
+    
+    public void setTransactionsList(TransactionsList transactionsList) {
+        this.transactionsList = transactionsList;
+    }
+    
     public User(String name, Integer balance) {
         this.identifier = UserIdsGenerator.getInstance().generateId();
         this.name = name;
         this.balance = balance;
-
+        this.transactionsList = new TransactionsLinkedList();
+        
         if (balance < 0)
-            this.balance = 0;
+        this.balance = 0;
+    }
+    
+    public TransactionsList getTransactionsList() {
+        return transactionsList;
     }
 
     public Integer getIdentifier() {return identifier;}

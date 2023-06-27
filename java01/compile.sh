@@ -28,7 +28,7 @@ else
 fi
 
 #Delete the generated class files
-if [ -z "$PACKAGE_NAME" ]; then
+if [ -z "$PACKAGE_NAME" ]; then 
     rm "$MAIN_CLASS.class"
 else
     rm -rf "$PACKAGE_NAME"

@@ -9,6 +9,9 @@ public class User {
         this.identifier = UserIdsGenerator.getInstance().generateId();
         this.name = name;
         this.balance = balance;
+
+        if (balance < 0)
+            this.balance = 0;
     }
 
     public Integer getIdentifier() {return identifier;}
