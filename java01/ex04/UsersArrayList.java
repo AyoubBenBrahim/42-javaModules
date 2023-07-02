@@ -1,4 +1,4 @@
-package java01.ex02;
+package java01.ex04;
 
 public class UsersArrayList implements UsersList {
 
@@ -12,7 +12,7 @@ public class UsersArrayList implements UsersList {
     }
 
     @Override
-    public void addUser(User user) throws UserNotFoundException {
+    public void addUser(User user) {
 
         if (user == null) {
             throw new UserNotFoundException();
@@ -42,7 +42,7 @@ public class UsersArrayList implements UsersList {
     }
 
     @Override
-    public User getUserById(Integer id) throws UserNotFoundException {
+    public User getUserById(Integer id) {
         for (User user : usersList) {
             if (user.getIdentifier() == id) {
                 return user;
@@ -52,7 +52,7 @@ public class UsersArrayList implements UsersList {
     }
 
     @Override
-    public User getUserByIndex(Integer index) throws UserNotFoundException {
+    public User getUserByIndex(Integer index) {
 
         for (int i = 0; i < usersList.length; i++) {
             if (i == index && usersList[i] != null) {
@@ -72,11 +72,5 @@ public class UsersArrayList implements UsersList {
         }
         return count;
     }
-
-    // public static class UserNotFoundException extends Exception {
-    //     public UserNotFoundException() {
-    //         super("User not found");
-    //     }
-    // }
 
 }

@@ -36,6 +36,7 @@ public class UsersArrayList implements UsersList {
         for (int i = 0; i < usersList.length; i++) {
             if (usersList[i] == null) {
                 usersList[i] = user;
+                return;
             }
         }
     }
