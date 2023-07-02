@@ -27,9 +27,16 @@ else
     java -cp . "$PACKAGE_NAME.$MAIN_CLASS"
 fi
 
+
+
+
 #Delete the generated class files
 if [ -z "$PACKAGE_NAME" ]; then 
-    rm "$MAIN_CLASS.class"
+    /bin/rm  "$MAIN_CLASS.class"
 else
-    rm -rf "$PACKAGE_NAME"
+    /bin/rm -rf "$PACKAGE_NAME"
+fi
+
+if [ -d $(echo $PACKAGE_NAME | cut -d'.' -f1) ]; then
+    /bin/rm -rf $(echo $PACKAGE_NAME | cut -d'.' -f1)
 fi
