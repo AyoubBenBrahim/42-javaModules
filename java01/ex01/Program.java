@@ -1,8 +1,5 @@
 package java01.ex01;
 
-/**
- * Program
- */
 public class Program {
 
     public static void main(String[] args) {

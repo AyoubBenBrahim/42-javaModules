@@ -7,9 +7,6 @@ public class User {
     private TransactionsList transactionsList;
 
     
-    public void setTransactionsList(TransactionsList transactionsList) {
-        this.transactionsList = transactionsList;
-    }
     
     public User(String name, Integer balance) {
         this.identifier = UserIdsGenerator.getInstance().generateId();
@@ -22,7 +19,11 @@ public class User {
     }
     
     public TransactionsList getTransactionsList() {
-        return transactionsList;
+         return transactionsList;
+    }
+
+    public void setTransactionsList(TransactionsList transactionsList) {
+        this.transactionsList = transactionsList;
     }
 
     public Integer getIdentifier() {return identifier;}

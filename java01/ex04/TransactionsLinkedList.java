@@ -37,7 +37,7 @@ public class TransactionsLinkedList implements TransactionsList {
         TransactionNode previous = null;
 
         if (uuid == null) {
-            throw new TransactionNotFoundException("Transaction not found");
+            throw new MyExceptions.TransactionNotFoundException("Transaction not found");
         }
 
         while (current != null) {
@@ -53,7 +53,7 @@ public class TransactionsLinkedList implements TransactionsList {
             previous = current;
             current = current.getNext();
         }
-        throw new TransactionNotFoundException("TransactionNotFoundException");
+        throw new  MyExceptions.TransactionNotFoundException("TransactionNotFoundException");
     }
 
     @Override
@@ -75,6 +75,8 @@ public class TransactionsLinkedList implements TransactionsList {
 
     @Override
     public void printTransactionsArray() {
+        if (size == 0 || head == null)
+            return;
         Transaction[] transactionsArr = toArray();
         for (Transaction transaction : transactionsArr) {
             System.out.println(transaction.getUuid());

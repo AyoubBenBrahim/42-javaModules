@@ -15,7 +15,7 @@ public class UsersArrayList implements UsersList {
     public void addUser(User user) {
 
         if (user == null) {
-            throw new UserNotFoundException();
+            throw new  MyExceptions.UserNotFoundException();
         }
 
         if (getUsersCount() == 0) {
@@ -48,7 +48,7 @@ public class UsersArrayList implements UsersList {
                 return user;
             }
         }
-        throw new UserNotFoundException();
+        throw new  MyExceptions.UserNotFoundException();
     }
 
     @Override
@@ -59,7 +59,7 @@ public class UsersArrayList implements UsersList {
                 return usersList[i];
             }
         }
-        throw new UserNotFoundException();
+        throw new  MyExceptions.UserNotFoundException();
     }
 
     @Override
