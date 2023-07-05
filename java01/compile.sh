@@ -1,10 +1,14 @@
 #!/bin/bash
 
 if [ $# -eq 0 ]; then
-    exec  echo "Please provide the project folder as an argument."
+    echo "Please provide the project folder as an argument."
+    exit 1
 fi
 
-cd "$1" || exit 1
+PROJECT_FOLDER=$1
+shift
+
+cd "$PROJECT_FOLDER" || exit 1
 
 #Find the name of the main class by looking for a file with a main() method
 MAIN_FILE=$(find . -name "*.java" -print0 | xargs -0 grep -l 'public static void main' | head -n 1)
@@ -20,15 +24,12 @@ else
     javac -d . $(find . -name "*.java" ! -name "$MAIN_CLASS.java" -print) "$MAIN_FILE"
 fi
 
-#Run the main class
+#Run the main class with the command-line arguments
 if [ -z "$PACKAGE_NAME" ]; then
-    java "$MAIN_CLASS"
+    java "$MAIN_CLASS" "$@"
 else
-    java -cp . "$PACKAGE_NAME.$MAIN_CLASS"
+    java -cp . "$PACKAGE_NAME.$MAIN_CLASS" "$@"
 fi
-
-
-
 
 #Delete the generated class files
 if [ -z "$PACKAGE_NAME" ]; then 

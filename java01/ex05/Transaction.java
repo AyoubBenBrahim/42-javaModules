@@ -79,27 +79,17 @@ public class Transaction {
     }
 
     public void performTransfer() {
-        // if (sender.getBalance() < transferAmount) {
-        //     System.out.println("Insufficient funds");
-        //     System.exit(0);
-        // }
-
+      
         if (transferCategory == TransferCategory.DEBIT) {
-            // System.out.println("Debit transfer");
-            // System.out.println("Sender: " + sender.getName() + ", Balance: " + sender.getBalance());
-            // System.out.println("Recipient: " + recipient.getName() + ", Balance: " + recipient.getBalance());
-
             sender.setBalance(sender.getBalance() - transferAmount);
             recipient.setBalance(recipient.getBalance() + transferAmount);
 
-
-
             String output = sender.getName() + " -> " + recipient.getName() + ", -" + transferAmount + ", OUTCOME, "
                     + identifier.toString();
-            System.out.println(output);
+            // System.out.println(output);
             output = recipient.getName() + " -> " + sender.getName() + ", +" + transferAmount + ", INCOME,  "
                     + identifier.toString();
-            System.out.println(output);
+            // System.out.println(output);
         }
     }
 

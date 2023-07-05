@@ -1,5 +1,8 @@
 package java01.ex05;
 
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
 public class Menu {
 
     TransactionsService Service;
@@ -25,54 +28,107 @@ public class Menu {
     }
 
     public void addUser() {
-        System.out.println("Enter a user name and a balance:");
-        String name = System.console().readLine();
-        String balance = System.console().readLine();
-        User user = new User(name, Integer.parseInt(balance));
-        Service.addUser(user);
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter a user name and a balance");
+
+        while (true) {
+            String[] args = scanner.nextLine().split(" ");
+
+            if (args.length != 2) {
+                System.err.println("Invalid Input, Try Again");
+                continue;
+            }
+            try {
+                Integer balance = Integer.parseInt(args[1]);
+                User user = new User(args[0], balance);
+                Service.addUser(user);
+                System.out.printf("User with id = %d is added\n", user.getIdentifier());
+                return;
+            } catch (NumberFormatException ex) {
+                System.err.println("Invalid Input, Try Again");
+            } catch (RuntimeException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
     }
 
     public void viewUserBalances() {
-        System.out.println("Enter user name:");
-        String name = System.console().readLine();
-        User user = new User(name, 0);
-        System.out.println("User balance: " + Service.getUserBalance(user));
+        System.out.println("Enter a user ID:");
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            try {
+                Integer userID = scanner.nextInt();
+                System.out.println(Service.getUserNameById(userID) + " - " + Service.getUserBalanceById(userID));
+                return;
+            } catch (MyExceptions.UserNotFoundException e) {
+                System.err.println("UserNotFound Try Again");
+            } catch (InputMismatchException e) {
+                System.err.println("Enter a valid ID");
+                scanner.nextLine();
+            } catch (RuntimeException e) {
+                System.err.println(e.getMessage());
+            }
+
+        }
     }
 
     public void performTransfer() {
         System.out.println("Enter a sender ID, a recipient ID, and a transfer amount:");
+        Scanner scanner = new Scanner(System.in);
 
-  
+        while (true) {
+            String[] args = scanner.nextLine().split(" ");
 
-        try {
-            Service.performTransfer(sourceName, destinationName, Integer.parseInt(amount));
-        } catch (MyExceptions.UserNotFoundException ex) {
-            System.out.println(ex.getMessage());
-        } catch (MyExceptions.TransactionNotFoundException ex) {
-            System.out.println(ex.getMessage());
-        } catch (MyExceptions.NotEnoughMoneyException ex) {
-            System.out.println(ex.getMessage());
-        } catch (MyExceptions.TransferNotValidException ex) {
-            System.out.println(ex.getMessage());
-        } catch (RuntimeException ex) {
-            System.out.println(ex.getMessage());
+            if (args.length != 3) {
+                System.err.println("Invalid Input, Try Again");
+                continue;
+            }
+
+            try {
+                Integer senderID = Integer.parseInt(args[0]);
+                Integer recipientID = Integer.parseInt(args[1]);
+                Integer transferAmount = Integer.parseInt(args[2]);
+                Service.performTransfer(senderID, recipientID, transferAmount);
+                return;
+            } catch (MyExceptions.UserNotFoundException ex) {
+                System.err.println("UserNotFound Try Again");
+            } catch (MyExceptions.TransactionNotFoundException ex) {
+                System.out.println(ex.getMessage());
+            } catch (InputMismatchException e) {
+                System.err.println("Enter a valid Integer");
+                scanner.nextLine();
+            } catch (RuntimeException ex) {
+                System.out.println(ex.getMessage());
+            }
         }
     }
 
-    public void viewAllTransactionsByUser() {
+    public void viewAllTransactionsPerUser() {
+        Scanner scanner = new Scanner(System.in);
         System.out.println("Enter a user ID:");
-        Integer id = Integer.parseInt(System.console().readLine());
-        User user = ;
-        try {
-            for (Transaction transaction : Service.getTransactionsByUser(user)) {
-                System.out.println("transaction Details --> " + transaction);
+
+        while (true) {
+              String[] args = scanner.nextLine().split(" ");
+
+            if (args.length != 1) {
+                System.err.println("Invalid Args, Try Again");
+                continue;
             }
-        } catch (MyExceptions.UserNotFoundException ex) {
-            System.out.println(ex.getMessage());
-        } catch (MyExceptions.TransactionNotFoundException ex) {
-            System.out.println(ex.getMessage());
-        } catch (RuntimeException ex) {
-            System.out.println(ex.getMessage());
+            try {
+                Integer userID = Integer.parseInt(args[0]);
+                String userName = Service.getUserNameById(userID);
+                for (Transaction transaction : Service.getTransactionsByUser(userName)) {
+                System.out.println("transaction Details --> " + transaction);
+                }
+            } catch (MyExceptions.UserNotFoundException ex) {
+                System.out.println(ex.getMessage());
+            } catch (MyExceptions.TransactionNotFoundException ex) {
+                System.out.println(ex.getMessage());
+            } catch (RuntimeException ex) {
+                System.out.println(ex.getMessage());
+            }
         }
     }
 
@@ -80,7 +136,7 @@ public class Menu {
         System.out.println("Enter a user ID and a transfer UUID:");
         Integer id = Integer.parseInt(System.console().readLine());
         try {
-            Service.removeTransactionById(id);
+            // Service.removeTransactionById(id);
         } catch (MyExceptions.TransactionNotFoundException ex) {
             System.out.println(ex.getMessage());
         } catch (RuntimeException ex) {
@@ -89,22 +145,58 @@ public class Menu {
     }
 
     public void checkTransferValidity() {
-        // System.out.println("Enter a sender ID, a recipient ID, and a transfer amount:");
+        // System.out.println("Enter a sender ID, a recipient ID, and a transfer
+        // amount:");
         String sourceName = System.console().readLine();
         String destinationName = System.console().readLine();
         String amount = System.console().readLine();
         try {
-            Service.checkTransferValidity(sourceName, destinationName, Integer.parseInt(amount));
+            // Service.checkTransferValidity(sourceName, destinationName,
+            // Integer.parseInt(amount));
         } catch (MyExceptions.UserNotFoundException ex) {
             System.out.println(ex.getMessage());
         } catch (MyExceptions.TransactionNotFoundException ex) {
             System.out.println(ex.getMessage());
-        } catch (MyExceptions.NotEnoughMoneyException ex) {
-            System.out.println(ex.getMessage());
-        } catch (MyExceptions.TransferNotValidException ex) {
-            System.out.println(ex.getMessage());
         } catch (RuntimeException ex) {
             System.out.println(ex.getMessage());
+        }
+    }
+
+    public void dispatcher(int choice) {
+        switch (choice) {
+            case 1:
+                addUser();
+                break;
+            case 2:
+                viewUserBalances();
+                break;
+            case 3:
+                performTransfer();
+                System.out.println("The transfer is completed");
+                break;
+            case 4:
+                viewAllTransactionsPerUser();
+                break;
+            case 5:
+                if (dev) {
+                    removeTransactionById();
+                } else {
+                    System.exit(0);
+                }
+                break;
+            case 6:
+                if (dev) {
+                    checkTransferValidity();
+                } else {
+                    System.exit(0);
+                }
+                break;
+            case 7:
+                System.exit(0);
+                break;
+            default:
+                System.err.println("illegal Operation");
+                System.exit(-1);
         }
     }
 }

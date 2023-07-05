@@ -14,8 +14,46 @@ public class TransactionsService {
         userList.addUser(user);
     }
 
-    public int getUserBalance(User user) {
+    public Integer getUserBalance(User user) {
+        if (user == null)
+            throw new MyExceptions.UserNotFoundException("User not found");
+
         return user.getBalance();
+    }
+
+    public Integer getUserBalanceById(Integer userID) {
+        // return userList.getUserById(userID).getBalance();
+        User user = userList.getUserById(userID);
+        if (user == null) {
+            throw new MyExceptions.UserNotFoundException("User not found");
+        }
+        return user.getBalance();
+    }
+
+    public String getUserNameById(Integer userID) {
+        // return userList.getUserById(userID).getName();
+        User user = userList.getUserById(userID);
+        if (user == null) {
+            throw new MyExceptions.UserNotFoundException("User not found");
+        }
+        for (User user1 : userList.getUsersList()) {
+            if (user1.getIdentifier() == userID)
+                return user1.getName();
+        }
+        throw new MyExceptions.UserNotFoundException("User Not Found");
+    }
+
+    public User getUserById(Integer userID) {
+        // return userList.getUserById(userID).getName();
+        User user = userList.getUserById(userID);
+        if (user == null) {
+            throw new MyExceptions.UserNotFoundException("User not found");
+        }
+        for (User user1 : userList.getUsersList()) {
+            if (user1.getIdentifier() == userID) 
+                return user1;
+        }
+        throw new MyExceptions.UserNotFoundException("User Not Found");
     }
 
     public Transaction[] getTransactionsByUser(User user) {
@@ -58,17 +96,19 @@ public class TransactionsService {
     public void performTransfer(Integer senderID, Integer recipientID, Integer transferAmount) {
 
         if (senderID == 0 || recipientID == 0 || transferAmount < 0 || senderID == recipientID)
-            throw new MyExceptions.IllegalTransactionException("IllegalTransactionException");
+            throw new MyExceptions.IllegalTransactionException("IDs Invalid");
 
         if (userList.getUserById(senderID).getBalance() < transferAmount)
-            throw new MyExceptions.IllegalTransactionException("IllegalTransactionException");
+            throw new MyExceptions.IllegalTransactionException("Insufficient funds");
 
         User sender = userList.getUserById(senderID);
         User recipient = userList.getUserById(recipientID);
 
         UUID uuid = UUID.randomUUID();
-        Transaction debitTransaction = new Transaction(uuid, sender, recipient, transferAmount, Transaction.TransferCategory.DEBIT);
-        Transaction creditTransaction = new Transaction(uuid, sender, recipient, transferAmount, Transaction.TransferCategory.CREDIT);
+        Transaction debitTransaction = new Transaction(uuid, sender, recipient, transferAmount,
+                Transaction.TransferCategory.DEBIT);
+        Transaction creditTransaction = new Transaction(uuid, sender, recipient, transferAmount,
+                Transaction.TransferCategory.CREDIT);
 
         // declared uuid in Transaction class as final, so stter can't be used
         // debitTransaction.setUuid(uuid);

@@ -19,7 +19,7 @@ public class User {
     }
     
     public TransactionsList getTransactionsList() {
-         return transactionsList;
+        return transactionsList;
     }
 
     public void setTransactionsList(TransactionsList transactionsList) {
