@@ -3,7 +3,6 @@ package java01.ex02;
 public class UsersArrayList implements UsersList {
 
     private static Integer USERS_MAX = 10;
-    // private static Integer nbr_elem = 0;
 
     private User[] usersList;
 

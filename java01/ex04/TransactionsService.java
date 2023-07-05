@@ -18,7 +18,34 @@ public class TransactionsService {
         return user.getBalance();
     }
 
-    public Transaction[] getTransactionsByUser(User user) {
+    public void performTransfer(Integer senderID, Integer recipientID, Integer transferAmount) {
+
+        if (senderID == 0 || recipientID == 0 || transferAmount < 0 || senderID == recipientID)
+            throw new MyExceptions.IllegalTransactionException("IllegalTransactionException");
+
+        if (userList.getUserById(senderID).getBalance() < transferAmount)
+            throw new MyExceptions.IllegalTransactionException("IllegalTransactionException");
+
+        User sender = userList.getUserById(senderID);
+        User recipient = userList.getUserById(recipientID);
+
+        UUID uuid = UUID.randomUUID();
+        Transaction debitTransaction = new Transaction(uuid, sender, recipient, transferAmount,
+                Transaction.TransferCategory.DEBIT);
+        Transaction creditTransaction = new Transaction(uuid, sender, recipient, transferAmount,
+                Transaction.TransferCategory.CREDIT);
+
+        // declared uuid in Transaction class as final, so stter can't be used
+        // debitTransaction.setUuid(uuid);
+        // creditTransaction.setUuid(uuid);
+
+        sender.getTransactionsList().addTransaction(debitTransaction);
+        recipient.getTransactionsList().addTransaction(creditTransaction);
+
+        debitTransaction.performTransfer();
+    }
+
+    public Transaction[] getTransactionsPerUser(User user) {
         Transaction[] transactionList = user.getTransactionsList().toArray();
         Transaction[] transactionListByUser = new Transaction[transactionList.length];
         int size = 0;
@@ -35,7 +62,7 @@ public class TransactionsService {
         return transactionListByUserFinal;
     }
 
-    public void removeTransactionById(UUID transUuid, Integer userID) {
+    public void removeTransactionByUUID(UUID transUuid, Integer userID) {
         User user = userList.getUserById(userID);
         user.getTransactionsList().removeTransactionById(transUuid);
     }
@@ -53,30 +80,5 @@ public class TransactionsService {
 
         }
         return unpairTransactions.toArray();
-    }
-
-    public void performTransfer(Integer senderID, Integer recipientID, Integer transferAmount) {
-
-        if (senderID == 0 || recipientID == 0 || transferAmount < 0 || senderID == recipientID)
-            throw new MyExceptions.IllegalTransactionException("IllegalTransactionException");
-
-        if (userList.getUserById(senderID).getBalance() < transferAmount)
-            throw new MyExceptions.IllegalTransactionException("IllegalTransactionException");
-
-        User sender = userList.getUserById(senderID);
-        User recipient = userList.getUserById(recipientID);
-
-        UUID uuid = UUID.randomUUID();
-        Transaction debitTransaction = new Transaction(uuid, sender, recipient, transferAmount, Transaction.TransferCategory.DEBIT);
-        Transaction creditTransaction = new Transaction(uuid, sender, recipient, transferAmount, Transaction.TransferCategory.CREDIT);
-
-        // declared uuid in Transaction class as final, so stter can't be used
-        // debitTransaction.setUuid(uuid);
-        // creditTransaction.setUuid(uuid);
-
-        sender.getTransactionsList().addTransaction(debitTransaction);
-        recipient.getTransactionsList().addTransaction(creditTransaction);
-
-        debitTransaction.performTransfer();
     }
 }

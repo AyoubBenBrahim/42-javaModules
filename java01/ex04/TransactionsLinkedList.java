@@ -25,11 +25,6 @@ public class TransactionsLinkedList implements TransactionsList {
         size++;
     }
 
-    // @Override
-    // public Integer getTransactionsCount() {
-    // return size;
-    // }
-
     @Override
     public void removeTransactionById(UUID uuid) {
 

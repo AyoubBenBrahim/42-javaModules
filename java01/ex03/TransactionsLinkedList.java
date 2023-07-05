@@ -21,14 +21,8 @@ public class TransactionsLinkedList implements TransactionsList {
             tail.setNext(newNode);
             tail = newNode;
         }
-
         size++;
     }
-
-    // @Override
-    // public Integer getTransactionsCount() {
-    // return size;
-    // }
 
     @Override
     public void removeTransactionById(UUID uuid) {

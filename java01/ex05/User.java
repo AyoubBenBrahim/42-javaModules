@@ -4,9 +4,7 @@ public class User {
     private final Integer identifier;
     private String name;
     private Integer balance;
-    private TransactionsList transactionsList;
-
-    
+    private TransactionsList transactionsList; 
     
     public User(String name, Integer balance) {
         this.identifier = UserIdsGenerator.getInstance().generateId();

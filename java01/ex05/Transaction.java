@@ -79,28 +79,25 @@ public class Transaction {
     }
 
     public void performTransfer() {
-      
-        if (transferCategory == TransferCategory.DEBIT) {
+
+        // if (transferCategory == TransferCategory.DEBIT) {
             sender.setBalance(sender.getBalance() - transferAmount);
             recipient.setBalance(recipient.getBalance() + transferAmount);
-
-            String output = sender.getName() + " -> " + recipient.getName() + ", -" + transferAmount + ", OUTCOME, "
-                    + identifier.toString();
-            // System.out.println(output);
-            output = recipient.getName() + " -> " + sender.getName() + ", +" + transferAmount + ", INCOME,  "
-                    + identifier.toString();
-            // System.out.println(output);
-        }
+        
+        // } else if (transferCategory == TransferCategory.CREDIT) {
+        //     sender.setBalance(sender.getBalance() + transferAmount);
+        //     recipient.setBalance(recipient.getBalance() - transferAmount);
+        // }
     }
 
     public String toString() {
         return "     UUID: " + identifier.toString() + "\n" + "     sender: " + sender.getName()
                 + "\n"
                 + "     recipient: " + recipient.getName() + "\n" + "     amount: " + transferAmount
-                +  "\n" + "     sender id: " + sender.getIdentifier() + "\n"
+                + "\n" + "     sender id: " + sender.getIdentifier() + "\n"
                 + "     recipient id: " + recipient.getIdentifier() + "\n"
                 + "     category: " + transferCategory + "\n" + "     sender balance: "
                 + sender.getBalance() + "\n" + "     recipient balance: " + recipient.getBalance() + "\n";
-                
+
     }
 }

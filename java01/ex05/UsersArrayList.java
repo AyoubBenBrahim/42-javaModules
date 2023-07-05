@@ -53,13 +53,12 @@ public class UsersArrayList implements UsersList {
 
     @Override
     public User getUserById(Integer id) {
-        if (id == null || id < 0 || getUsersCount() == 0) 
+        if (id == null || id <= 0 || getUsersCount() == 0) 
             throw new  MyExceptions.UserNotFoundException("User not found");
         
         for (User user : usersList) {
-            if (user != null && user.getIdentifier() == id) {
+            if (user != null && user.getIdentifier() == id) 
                 return user;
-            }
         }
         throw new  MyExceptions.UserNotFoundException("User not found");
     }
@@ -68,9 +67,8 @@ public class UsersArrayList implements UsersList {
     public User getUserByIndex(Integer index) {
 
         for (int i = 0; i < usersList.length; i++) {
-            if (i == index && usersList[i] != null) {
+            if (i == index && usersList[i] != null)
                 return usersList[i];
-            }
         }
         throw new  MyExceptions.UserNotFoundException("User not found");
     }
@@ -79,9 +77,8 @@ public class UsersArrayList implements UsersList {
     public Integer getUsersCount() {
         Integer count = 0;
         for (User user : usersList) {
-            if (user != null) {
+            if (user != null) 
                 count++;
-            }
         }
         return count;
     }

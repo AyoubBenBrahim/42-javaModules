@@ -10,5 +10,4 @@ public interface UsersList {
     User getUserByIndex(Integer index);
 
     Integer getUsersCount();
-
 }
