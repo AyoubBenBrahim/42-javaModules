@@ -16,9 +16,14 @@ public class Program {
             Map<String, String> signatures = new HashMap<>();
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                String key = line.split(",")[0];
-                String value = line.split(",")[1];
-                signatures.put(key, value.trim());
+                try {
+                    String key = line.split(",")[0];
+                    String value = line.split(",")[1];
+                    signatures.put(key, value.trim());
+                } catch (Exception e) {
+                   System.err.println(e.getMessage());
+                   return null;
+                }
             }
             return signatures;
         } catch (IOException e) {
@@ -51,6 +56,10 @@ public class Program {
         String inputFileName = "./signatures.txt";
         FileOutputStream outputStream = null;
         Map<String, String> signatures = readSignatures(inputFileName);
+        if (signatures == null) {
+            System.err.println("Error: signatures.txt is not valid.");
+            return;
+        }
         File inputFile = new File(inputFileName);
         File outputFile = new File(inputFile.getParentFile(), "result.txt");
 
