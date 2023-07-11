@@ -3,11 +3,8 @@ package ex01;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.RoundingMode;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.TreeMap;
@@ -77,18 +74,18 @@ public class Program {
 
     public static void main(String[] args) {
         if (args.length != 2) {
-            System.out.println("Usage: java ex01.Program file1 file2");
+            System.out.println("Usage: java Program file1 file2");
             return;
         }
         String fileA = args[0];
         String fileB = args[1];
 
         String inputA = readFile(fileA);
-        System.out.println(inputA);
+        // System.out.println(inputA);
 
-        System.out.println("----");
+        // System.out.println("----");
         String inputB = readFile(fileB);
-        System.out.println(inputB);
+        // System.out.println(inputB);
 
         Map<String, Integer> dictionary = new TreeMap<String, Integer>();
         for (String word : (inputA + inputB).split(" ")) {
@@ -103,7 +100,7 @@ public class Program {
         try (PrintWriter writer = new PrintWriter("dictionary.txt")) {
             writer.println(String.join(" ", sortedWords));
         } catch (FileNotFoundException e) {
-            System.out.println("Error writing dictionary file: " + e.getMessage());
+            System.out.println("Error writing dictionary.txt: " + e.getMessage());
         }
 
         int n = dictionary.size();
@@ -118,7 +115,6 @@ public class Program {
             }
         }
 
-        // Set the frequency of each word in B
         for (String word : inputB.split(" ")) {
             int i = Collections.binarySearch(sortedWords, word);
             if (i >= 0) {
@@ -126,20 +122,14 @@ public class Program {
             }
         }
 
-        System.out.println(sortedWords);
-        System.out.println("A = " + vector1);
-        System.out.println("B = " + vector2);
-
-        // double similarity = cosineSimilarity(vector1, vector2);
-        // DecimalFormat df = new DecimalFormat("#.##");
-        // System.out.println("Cosine similarity between A and B: " +
-        // df.format(similarity));
+        // System.out.println(sortedWords);
+        // System.out.println("A = " + vector1);
+        // System.out.println("B = " + vector2);
 
         double similarity = cosineSimilarity(vector1, vector2);
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.DOWN);
         String formattedSimilarity = df.format(similarity);
         System.out.println("Similarity = " + formattedSimilarity);
-
     }
 }

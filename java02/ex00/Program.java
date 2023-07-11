@@ -40,6 +40,9 @@ public class Program {
             String base64 = Base64.getEncoder().encodeToString(bytes);
             byte[] decoded = Base64.getDecoder().decode(base64);
             String hex = byteToHex(decoded);
+            if (hex.length() < length + 7) // i forgot this condition then substring throws StringIndexOutOfBoundsException
+                return hex;
+            
             return hex.substring(0, length + 7); // 7 spaces between bytes "25 50 44 46 2D 31 2E 35"
         }
     }
