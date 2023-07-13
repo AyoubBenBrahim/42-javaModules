@@ -1,6 +1,8 @@
 package ex02;
 
 import java.util.Random;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Program {
 
@@ -8,7 +10,7 @@ public class Program {
         int[] arr = new int[size];
         Random random = new Random();
         for (int i = 0; i < size; i++) {
-            arr[i] = random.nextInt(1000) + 1;
+            arr[i] = random.nextInt() % 1000;
         }
         return arr;
     }
@@ -44,6 +46,9 @@ public class Program {
         try {
             size = Integer.parseInt(args[0].split("=")[1]);
             threadCount = Integer.parseInt(args[1].split("=")[1]);
+            if (size < 1 || size > 2000000 || threadCount < 1 || threadCount > size)
+                printUsage();
+                
         } catch (Exception e) {
             printUsage();
         }
@@ -54,28 +59,45 @@ public class Program {
         NormalSum normalSum = new NormalSum(arr, size);
         System.out.println("Sum: " + normalSum.sum());
 
-        // ParallelSum parallelSum = new ParallelSum(arr, count);
-        // System.out.println(parallelSum.sum());
-
         int sectionSize = (int) Math.ceil((double) size / threadCount);
+        System.out.println("sectionSize: " + sectionSize   );
 
         SumThread[] threads = new SumThread[threadCount];
-        Object lock = new Object();
+        // Object lock = new Object();
+        BlockingQueue<String> blockingQueue = new LinkedBlockingQueue<>();
+
 
         for (int i = 0; i < threadCount; i++) {
             int startIndex = i * sectionSize;
             int endIndex = Math.min((i + 1) * sectionSize, size);
-            threads[i] = new SumThread(arr, startIndex, endIndex, i, lock);
+            threads[i] = new SumThread(arr, startIndex, endIndex, i, blockingQueue);
             threads[i].start();
         }
+
+        Thread printer = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        System.out.println(blockingQueue.take());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (blockingQueue.isEmpty()) {
+                        break;
+                    }
+                }
+            }
+        });
+        printer.start();
 
         int sum = 0;
         for (SumThread thread : threads) {
             try {
                 thread.join();
-                synchronized (lock) {
+                // synchronized (lock) 
                     sum += thread.getSum();
-                }
+                
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
