@@ -1,6 +1,6 @@
 package ex02;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Semaphore;
 
 public class SumThread extends Thread {
     private final int[] arr;
@@ -8,15 +8,16 @@ public class SumThread extends Thread {
     private final int endIndex;
     private final int threadId;
     private int sum;
+    private final Semaphore semaphore;
+    private final Semaphore nextSemaphore;
 
-    private final BlockingQueue<String> blockingQueue;
-
-    public SumThread(int[] arr, int startIndex, int endIndex, int threadId, BlockingQueue<String> blockingQueue) {
+    public SumThread(int[] arr, int startIndex, int endIndex, int threadId, Semaphore semaphore, Semaphore nextSemaphore) {
         this.arr = arr;
         this.startIndex = startIndex;
         this.endIndex = endIndex;
         this.threadId = threadId;
-        this.blockingQueue = blockingQueue;
+        this.semaphore = semaphore;
+        this.nextSemaphore = nextSemaphore;
     }
 
     @Override
@@ -25,17 +26,17 @@ public class SumThread extends Thread {
         for (int i = startIndex; i < endIndex; i++) {
             sum += arr[i];
         }
-        String result = String.format("Thread %d: from %d to %d sum is %d", threadId+1, startIndex, endIndex - 1, sum);
         try {
-            blockingQueue.put(result);
+            semaphore.acquire();
+            System.out.printf("Thread %d: from %d to %d sum is %d\n", threadId+1, startIndex, endIndex - 1, sum);
+            nextSemaphore.release();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        this.sum = sum;
     }
 
     public int getSum() {
-        System.out.println("Thread " + threadId + " sum: " + sum);
         return sum;
-
     }
 }

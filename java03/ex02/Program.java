@@ -1,8 +1,7 @@
 package ex02;
 
 import java.util.Random;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.Semaphore;
 
 public class Program {
 
@@ -16,7 +15,7 @@ public class Program {
     }
 
     private static void printUsage() {
-        System.err.println("Usage: java Program --arraySize=2000000 --threadsCount=4");
+        System.err.println("Usage: ./compile.sh --arraySize=2000000 --threadsCount=4");
         System.exit(1);
     }
 
@@ -36,10 +35,6 @@ public class Program {
         int size = 0;
         int threadCount = 0;
 
-        System.out.println("args.length: " + args.length);
-        System.out.println("args[0]: " + args[0]);
-        System.out.println("args[1]: " + args[1]);
-
         if (args.length != 2 || !args[0].contains("--arraySize=") || !args[1].contains("--threadsCount="))
             printUsage();
 
@@ -54,42 +49,31 @@ public class Program {
         }
 
         int[] arr = generateRandomArray(size);
-        printArray(arr);
+        // printArray(arr);
 
         NormalSum normalSum = new NormalSum(arr, size);
         System.out.println("Sum: " + normalSum.sum());
 
         int sectionSize = (int) Math.ceil((double) size / threadCount);
-        System.out.println("sectionSize: " + sectionSize   );
 
-        SumThread[] threads = new SumThread[threadCount];
         // Object lock = new Object();
-        BlockingQueue<String> blockingQueue = new LinkedBlockingQueue<>();
-
-
+        // BlockingQueue<String> blockingQueue = new LinkedBlockingQueue<>();
+ 
+        Semaphore[] semaphores = new Semaphore[threadCount];
+        for (int i = 0; i < threadCount; i++) {
+            semaphores[i] = new Semaphore(0);
+        }
+    
+        SumThread[] threads = new SumThread[threadCount];
+    
         for (int i = 0; i < threadCount; i++) {
             int startIndex = i * sectionSize;
             int endIndex = Math.min((i + 1) * sectionSize, size);
-            threads[i] = new SumThread(arr, startIndex, endIndex, i, blockingQueue);
+            Semaphore semaphore = i == 0 ? new Semaphore(1) : semaphores[i - 1];
+            Semaphore nextSemaphore = semaphores[i];
+            threads[i] = new SumThread(arr, startIndex, endIndex, i, semaphore, nextSemaphore);
             threads[i].start();
         }
-
-        Thread printer = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        System.out.println(blockingQueue.take());
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (blockingQueue.isEmpty()) {
-                        break;
-                    }
-                }
-            }
-        });
-        printer.start();
 
         int sum = 0;
         for (SumThread thread : threads) {
