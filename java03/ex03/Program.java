@@ -1,25 +1,22 @@
 package ex03;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.SocketException;
-import java.net.URL;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 public class Program {
 
     private static void printUsage() {
-        System.err.println("Usage: ./compile.sh --threadsCount=4");
+        System.err.println("Usage: ./compile.sh --threadsCount=1");
         System.exit(1);
     }
 
     private static final String FILE_URLS = "./files_urls.txt";
     private static final String DOWNLOAD_DIR = "./downloads/";
-
-    private static final int BUFFER_SIZE = 4096;
-    private static final int MAX_THREADS = 100;
     private static int threadCount = 0;
 
     public static void main(String[] args) {
@@ -29,7 +26,7 @@ public class Program {
 
         try {
             threadCount = Integer.parseInt(args[0].split("=")[1]);
-            if (threadCount < 1 || threadCount > MAX_THREADS)
+            if (threadCount < 1)
                 printUsage();
         } catch (Exception e) {
             printUsage();
@@ -43,27 +40,49 @@ public class Program {
         }
 
         List<String> urlsList = readUrlsFromFile(FILE_URLS);
-        int fileNumber = 1;
-        for (String fileUrl : urlsList) {
-            String fileName = getFileNameFromUrl(fileUrl);
-            downloadFile(fileUrl, fileName, fileNumber);
-            fileNumber++;
+        Queue<String> filesToDownload = new ArrayDeque<>(urlsList);
+        
+
+        for (int i = 0; i < threadCount; i++) {
+            Thread thread = new Thread(new DownloadThread(urlsList ,filesToDownload, DOWNLOAD_DIR));
+            thread.start();
+        }
+
+    }
+
+    public static boolean isURL(String url) {
+        try {
+            (new java.net.URL(url)).openStream().close();
+            return true;
+        } catch (Exception ex) {
+            return false;
         }
     }
 
     private static List<String> readUrlsFromFile(String fileName) {
         List<String> urls = new ArrayList<>();
+
+        File file = new File(fileName);
+        if (!file.isFile() || !file.canRead()) {
+            System.err.println("cannot read file: " + fileName);
+            System.exit(-1);
+        }
+
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("#") || line.isEmpty())
                     continue;
-                urls.add(line);
+                if (isURL(line))
+                    urls.add(line);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        if (urls.size() == 0) {
+            System.err.println("File is empty");
+            System.exit(-1);
+        }
         return urls;
     }
 
@@ -72,111 +91,56 @@ public class Program {
         return parts[parts.length - 1];
     }
 
-    private static void downloadFile(String fileUrl, String fileName, int fileNumber) {
+    private static void downloadThisShit(String fileUrl, String downloadDir, String fileName) {
+        if (fileUrl == null)
+            return;
+        InputStream inputStream;
         try {
-            URL url = new URL(fileUrl);
-            HttpURLConnection connection;
-            int timeout = 10000;
-            long startTime = System.currentTimeMillis();
-
-            do {
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setConnectTimeout(timeout);
-                int responseCode = connection.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    // System.out.println("Connection successful: " + fileUrl);
-                    break;
-                } else {
-                    System.out.println("Connection failed (" + responseCode + "): " + fileUrl);
-                    Thread.sleep(1000);
-                }
-                if (System.currentTimeMillis() - startTime > timeout) {
-                    System.out.println("Timeout reached: " + fileUrl);
-                    System.exit(1);
-                }
-            } while (true);
-
-            long fileSize = connection.getContentLength();
-
-            int chunkSize = (int) Math.ceil((double) fileSize / threadCount);
-
-            ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-
-            for (int i = 0; i < threadCount; i++) {
-                int startByte = i * chunkSize;
-                int endByte = Math.min((i + 1) * chunkSize - 1, (int) fileSize - 1);
-                executor.execute(new DownloadThread(fileUrl, startByte, endByte, DOWNLOAD_DIR, fileName));
-                System.out.println("Thread-" + (i + 1) + " start download file number " + fileNumber);
-            }
-
-            executor.shutdown();
-            while (!executor.isTerminated()) {
-                Thread.sleep(1000);
-            }
-
-            System.out.println("Thread-1 finish download file number " + fileNumber);
-
-            for (int i = 2; i <= threadCount; i++) {
-                System.out.println("Thread-" + i + " finish download file number " + fileNumber);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (SocketException e) {
-            if (e.getMessage().equals("Network is unreachable (connect failed)")) {
-                System.err.println("[ERROR] Cannot connect to server: network is unreachable");
-                System.exit(1);
-            } else {
-                e.printStackTrace();
-            }
+            inputStream = URI.create(fileUrl).toURL().openStream();
+            Files.copy(inputStream, Paths.get(downloadDir, fileName), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
     private static class DownloadThread implements Runnable {
-        private final String fileUrl;
-        private final long startPos;
-        private final long endPos;
+        private final Queue<String> filesToDownload;
         private final String downloadDir;
-        private final String fileName;
+        List<String> lst;
 
-        public DownloadThread(String fileUrl, long startPos, long endPos, String downloadDir, String fileName) {
-            this.fileUrl = fileUrl;
-            this.startPos = startPos;
-            this.endPos = endPos;
+        public DownloadThread(List<String> lst, Queue<String> filesToDownload, String downloadDir) {
+            this.filesToDownload = filesToDownload;
             this.downloadDir = downloadDir;
-            this.fileName = fileName;
+            this.lst = lst;
         }
 
         @Override
         public void run() {
-            try {
-                URL url = new URL(fileUrl);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-                // Set the range header
-                String range = "bytes=" + startPos + "-" + endPos;
-                connection.setRequestProperty("Range", range);
-
-                // Open input stream and output file
-                try (InputStream inputStream = connection.getInputStream();
-                        RandomAccessFile outputFile = new RandomAccessFile(downloadDir + "/" + fileName, "rw")) {
-
-                    // Seek to the correct position in the output file
-                    outputFile.seek(startPos);
-
-                    // Read from input stream and write to output file
-                    byte[] buffer = new byte[BUFFER_SIZE];
-                    int bytesRead;
-                    while ((bytesRead = inputStream.read(buffer)) != -1) {
-                        outputFile.write(buffer, 0, bytesRead);
-                    }
+            while (!filesToDownload.isEmpty()) {
+                // String fileUrl = filesToDownload.remove();
+                // if (fileUrl == null)
+                //     return; dont use Queue.remove() because it throws NoSuchElementException
+                // remove method of the Queue interface does not return null when the queue is empty.
+                // Instead, it throws a NoSuchElementException
+                // use poll() instead
+                String fileUrl = filesToDownload.poll();
+                if (fileUrl == null)
+                    return;
+                String fileName = getFileNameFromUrl(fileUrl);
+                try {
+                    Integer threadID = Integer.parseInt(Thread.currentThread().getName().split("-")[1]);// pool-3-thread-1
+                    int fileID = lst.indexOf(fileUrl) + 1;
+                    System.out.println("Thread-" + (threadID + 1) + " start download file " + fileID);
+                    downloadThisShit(fileUrl, downloadDir, fileName);
+                    System.out.println("Thread-" + (threadID +1)+ " finish download file " + fileID);
+                    fileID++;
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
+
+
     }
 
 }
