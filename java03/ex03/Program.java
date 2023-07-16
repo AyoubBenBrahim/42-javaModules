@@ -2,6 +2,7 @@ package ex03;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.SocketException;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,7 +19,7 @@ public class Program {
     private static final String DOWNLOAD_DIR = "./downloads/";
 
     private static final int BUFFER_SIZE = 4096;
-    private static final int MAX_THREADS = 10;
+    private static final int MAX_THREADS = 100;
     private static int threadCount = 0;
 
     public static void main(String[] args) {
@@ -32,6 +33,13 @@ public class Program {
                 printUsage();
         } catch (Exception e) {
             printUsage();
+        }
+
+        File dir = new File(DOWNLOAD_DIR);
+        if (dir.isDirectory()) {
+            for (File file : dir.listFiles()) {
+                file.delete();
+            }
         }
 
         List<String> urlsList = readUrlsFromFile(FILE_URLS);
@@ -48,6 +56,8 @@ public class Program {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
+                if (line.startsWith("#") || line.isEmpty())
+                    continue;
                 urls.add(line);
             }
         } catch (IOException e) {
@@ -66,9 +76,12 @@ public class Program {
         try {
             URL url = new URL(fileUrl);
             HttpURLConnection connection;
+            int timeout = 10000;
+            long startTime = System.currentTimeMillis();
 
             do {
                 connection = (HttpURLConnection) url.openConnection();
+                connection.setConnectTimeout(timeout);
                 int responseCode = connection.getResponseCode();
                 if (responseCode == HttpURLConnection.HTTP_OK) {
                     // System.out.println("Connection successful: " + fileUrl);
@@ -77,47 +90,23 @@ public class Program {
                     System.out.println("Connection failed (" + responseCode + "): " + fileUrl);
                     Thread.sleep(1000);
                 }
+                if (System.currentTimeMillis() - startTime > timeout) {
+                    System.out.println("Timeout reached: " + fileUrl);
+                    System.exit(1);
+                }
             } while (true);
-
-            // long fileSize = connection.getContentLengthLong();
-
-            // if (fileSize >= 1024 * 1024)
-            //     fileSize = fileSize / (1024 * 1024);
-
-            // // Calculate range size based on file size and number of threads
-            // // long rangeSize = (long) Math.ceil((double) fileSize / threadCount);
-            // // rangeSize = (rangeSize + BUFFER_SIZE - 1) / BUFFER_SIZE * BUFFER_SIZE;
-
-            // // System.out.println("File size: " + fileSize);
-            // // System.out.println("Range size: " + rangeSize);
-
-            // ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-
-            // long startPos = 0;
-            // long endPos = 4096 - 1;
-
-            // for (int i = 0; i < threadCount; i++) {
-            //     if (i == threadCount - 1) {
-            //         endPos = fileSize - 1;
-            //     }
-
-            //     // executor.execute(new DownloadThread(fileUrl, fileNumber, startPos, endPos));
-            //     executor.execute(new DownloadThread(fileUrl, startPos, endPos, DOWNLOAD_DIR, fileName));
-            //     startPos += 4096;
-            //     endPos += 4096;
-            // }
 
             long fileSize = connection.getContentLength();
 
             int chunkSize = (int) Math.ceil((double) fileSize / threadCount);
-    
+
             ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-    
+
             for (int i = 0; i < threadCount; i++) {
                 int startByte = i * chunkSize;
                 int endByte = Math.min((i + 1) * chunkSize - 1, (int) fileSize - 1);
                 executor.execute(new DownloadThread(fileUrl, startByte, endByte, DOWNLOAD_DIR, fileName));
-                System.out.println("Thread-" + (i+1) + " start download file number " + fileNumber);
+                System.out.println("Thread-" + (i + 1) + " start download file number " + fileNumber);
             }
 
             executor.shutdown();
@@ -130,9 +119,17 @@ public class Program {
             for (int i = 2; i <= threadCount; i++) {
                 System.out.println("Thread-" + i + " finish download file number " + fileNumber);
             }
-
-            // System.out.println("Download completed successfully: " + fileUrl);
-        } catch (IOException | InterruptedException e) {
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (SocketException e) {
+            if (e.getMessage().equals("Network is unreachable (connect failed)")) {
+                System.err.println("[ERROR] Cannot connect to server: network is unreachable");
+                System.exit(1);
+            } else {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
