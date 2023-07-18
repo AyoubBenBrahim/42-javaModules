@@ -43,8 +43,9 @@ public class Program {
             threadCount = Integer.parseInt(args[1].split("=")[1]);
             if (size < 1 || size > 2000000 || threadCount < 1 || threadCount > size)
                 printUsage();
-                
+
         } catch (Exception e) {
+            System.err.println(e.getMessage());
             printUsage();
         }
 
@@ -58,14 +59,14 @@ public class Program {
 
         // Object lock = new Object();
         // BlockingQueue<String> blockingQueue = new LinkedBlockingQueue<>();
- 
+
         Semaphore[] semaphores = new Semaphore[threadCount];
         for (int i = 0; i < threadCount; i++) {
             semaphores[i] = new Semaphore(0);
         }
-    
+
         SumThread[] threads = new SumThread[threadCount];
-    
+
         for (int i = 0; i < threadCount; i++) {
             int startIndex = i * sectionSize;
             int endIndex = Math.min((i + 1) * sectionSize, size);
@@ -79,9 +80,8 @@ public class Program {
         for (SumThread thread : threads) {
             try {
                 thread.join();
-                // synchronized (lock) 
-                    sum += thread.getSum();
-                
+                sum += thread.getSum();
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

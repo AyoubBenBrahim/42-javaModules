@@ -33,21 +33,19 @@ public class Program {
         }
 
         File dir = new File(DOWNLOAD_DIR);
-        if (dir.isDirectory()) {
-            for (File file : dir.listFiles()) {
+        if (dir.exists()) {
+            for (File file : dir.listFiles())
                 file.delete();
-            }
-        }
+        } else
+            dir.mkdir();
 
         List<String> urlsList = readUrlsFromFile(FILE_URLS);
         Queue<String> filesToDownload = new ArrayDeque<>(urlsList);
-        
 
         for (int i = 0; i < threadCount; i++) {
-            Thread thread = new Thread(new DownloadThread(urlsList ,filesToDownload, DOWNLOAD_DIR));
+            Thread thread = new Thread(new DownloadThread(urlsList, filesToDownload, DOWNLOAD_DIR));
             thread.start();
         }
-
     }
 
     public static boolean isURL(String url) {
@@ -119,8 +117,9 @@ public class Program {
             while (!filesToDownload.isEmpty()) {
                 // String fileUrl = filesToDownload.remove();
                 // if (fileUrl == null)
-                //     return; dont use Queue.remove() because it throws NoSuchElementException
-                // remove method of the Queue interface does not return null when the queue is empty.
+                // return; dont use Queue.remove() because it throws NoSuchElementException
+                // remove method of the Queue interface does not return null when the queue is
+                // empty.
                 // Instead, it throws a NoSuchElementException
                 // use poll() instead
                 String fileUrl = filesToDownload.poll();
@@ -132,14 +131,13 @@ public class Program {
                     int fileID = lst.indexOf(fileUrl) + 1;
                     System.out.println("Thread-" + (threadID + 1) + " start download file " + fileID);
                     downloadThisShit(fileUrl, downloadDir, fileName);
-                    System.out.println("Thread-" + (threadID +1)+ " finish download file " + fileID);
+                    System.out.println("Thread-" + (threadID + 1) + " finish download file " + fileID);
                     fileID++;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
-
 
     }
 
