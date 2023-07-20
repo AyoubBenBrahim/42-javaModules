@@ -8,27 +8,24 @@ import javax.imageio.ImageIO;
 
 public class ImageHandler {
 
-    private  static char dot;
-    private  static char zero;
-    private String imgPath;
+    private static char dot;
+    private static char zero;
+    // private static String imgPath = "src/java/leet/printer/app/leet.png";
     private static BufferedImage img;
 
-    public ImageHandler(char dot, char zero, String imgPath) {
+    public ImageHandler(char dot, char zero) {
         this.dot = dot;
         this.zero = zero;
-        this.imgPath = imgPath;
 
         try {
-            img = ImageIO.read(new File(imgPath));
+
+            img = ImageIO.read(ImageHandler.class.getResource("/resources/it.bmp"));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-
-
-
-    public char[][]  imgToCharArray() {
+    public char[][] imgToCharArray() {
         int width = img.getWidth();
         int height = img.getHeight();
         char[][] charArray = new char[height][width];
@@ -38,7 +35,7 @@ public class ImageHandler {
                 int rgb = img.getRGB(j, i);
                 if (rgb == Color.BLACK.getRGB()) {
                     charArray[i][j] = zero;
-                } else if (rgb == Color.WHITE.getRGB()){
+                } else if (rgb == Color.WHITE.getRGB()) {
                     charArray[i][j] = dot;
                 }
             }
@@ -53,5 +50,5 @@ public class ImageHandler {
             }
             System.out.println();
         }
-    }   
+    }
 }
