@@ -1,4 +1,4 @@
-package leet.printer.logic;
+package fr.fortytwo.printer.logic;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -8,18 +8,17 @@ import javax.imageio.ImageIO;
 
 public class ImageHandler {
 
-    private static char dot;
-    private static char zero;
-    // private static String imgPath = "src/java/leet/printer/app/leet.png";
+    private static char white;
+    private static char black;
+    private static String imgPath = "/resources/image.bmp";
     private static BufferedImage img;
 
-    public ImageHandler(char dot, char zero) {
-        this.dot = dot;
-        this.zero = zero;
+    public ImageHandler(char white, char black) {
+        this.white = white;
+        this.black = black;
 
         try {
-
-            img = ImageIO.read(ImageHandler.class.getResource("/resources/it.bmp"));
+            img = ImageIO.read(ImageHandler.class.getResource(imgPath));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -34,9 +33,9 @@ public class ImageHandler {
             for (int j = 0; j < width; j++) {
                 int rgb = img.getRGB(j, i);
                 if (rgb == Color.BLACK.getRGB()) {
-                    charArray[i][j] = zero;
+                    charArray[i][j] = black;
                 } else if (rgb == Color.WHITE.getRGB()) {
-                    charArray[i][j] = dot;
+                    charArray[i][j] = white;
                 }
             }
         }

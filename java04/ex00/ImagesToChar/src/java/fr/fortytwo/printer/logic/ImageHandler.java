@@ -1,4 +1,4 @@
-package leet.printer.logic;
+package fr.fortytwo.printer.logic;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -8,38 +8,35 @@ import javax.imageio.ImageIO;
 
 public class ImageHandler {
 
-    private  static char dot;
-    private  static char zero;
-    private String imgPath;
-    private static BufferedImage img;
+    private  static char white;
+    private  static char black;
+    private String imagePath;
+    private static BufferedImage imgBuffer;
 
-    public ImageHandler(char dot, char zero, String imgPath) {
-        this.dot = dot;
-        this.zero = zero;
-        this.imgPath = imgPath;
+    public ImageHandler(char white, char black, String imagePath) {
+        this.white = white;
+        this.black = black;
+        this.imagePath = imagePath;
 
         try {
-            img = ImageIO.read(new File(imgPath));
+            imgBuffer = ImageIO.read(new File(imagePath));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-
-
-
     public char[][]  imgToCharArray() {
-        int width = img.getWidth();
-        int height = img.getHeight();
+        int width = imgBuffer.getWidth();
+        int height = imgBuffer.getHeight();
         char[][] charArray = new char[height][width];
         for (int i = 0; i < height; i++) {
             charArray[i] = new char[width];
             for (int j = 0; j < width; j++) {
-                int rgb = img.getRGB(j, i);
+                int rgb = imgBuffer.getRGB(j, i);
                 if (rgb == Color.BLACK.getRGB()) {
-                    charArray[i][j] = zero;
+                    charArray[i][j] = black;
                 } else if (rgb == Color.WHITE.getRGB()){
-                    charArray[i][j] = dot;
+                    charArray[i][j] = white;
                 }
             }
         }
